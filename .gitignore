@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+.env*.local
+npm-debug.log*
+.DS_Store
+
+.tmp-prodyous/
+.server-*.log
+.security-server-*.log
