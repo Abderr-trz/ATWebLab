@@ -2,6 +2,8 @@ node_modules
 .next
 out
 .env*.local
+.env.example
+.env.exemple
 npm-debug.log*
 .DS_Store
 

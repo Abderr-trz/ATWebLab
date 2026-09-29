@@ -37,21 +37,14 @@ Prérequis : Node.js 20.9 ou une version plus récente.
 git clone https://github.com/Abderr-trz/ATWebLab.git
 cd ATWebLab
 npm install
-cp .env.example .env.local
 npm run dev
 ```
 
 Le site sera disponible sur [http://localhost:3000](http://localhost:3000).
 
-Sous Windows PowerShell, remplacez la commande `cp` par :
-
-```powershell
-Copy-Item .env.example .env.local
-```
-
 ## Variables d’environnement
 
-Configurez les valeurs suivantes dans `.env.local` :
+Créez un fichier `.env.local` à la racine, puis configurez les valeurs suivantes :
 
 ```env
 RESEND_API_KEY=your_resend_api_key
