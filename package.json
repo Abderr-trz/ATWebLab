@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint app components lib next.config.mjs postcss.config.mjs tailwind.config.ts eslint.config.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.11.17",

@@ -27,6 +27,16 @@ const contactSchema = z.object({
   website: z.string().max(200).optional().default(""),
 });
 
+const validationMessages: Record<string, string> = {
+  name: "Le nom doit contenir au moins 2 caractères.",
+  company: "Le nom de l’entreprise est trop long.",
+  phone: "Le numéro de téléphone doit contenir entre 6 et 30 caractères.",
+  email: "Veuillez saisir une adresse e-mail valide.",
+  project: "Veuillez sélectionner un type de projet.",
+  budget: "Veuillez sélectionner un budget.",
+  message: "Le message doit contenir au moins 10 caractères.",
+};
+
 const noStoreHeaders = { "Cache-Control": "no-store, max-age=0" };
 
 function json(body: object, status = 200, headers: HeadersInit = {}) {
@@ -126,7 +136,11 @@ export async function POST(request: Request) {
 
     const parsed = contactSchema.safeParse(payload);
     if (!parsed.success) {
-      return json({ error: "Veuillez vérifier les informations saisies." }, 400);
+      const field = String(parsed.error.issues[0]?.path[0] || "");
+      return json(
+        { error: validationMessages[field] || "Veuillez vérifier les informations saisies." },
+        400,
+      );
     }
 
     const data = parsed.data;

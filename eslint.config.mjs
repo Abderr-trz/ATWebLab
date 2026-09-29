@@ -5,6 +5,8 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   globalIgnores([
     ".next/**",
+    ".git/**",
+    ".vercel/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
