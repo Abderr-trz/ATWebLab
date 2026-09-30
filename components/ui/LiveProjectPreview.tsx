@@ -5,16 +5,23 @@ import { useEffect, useRef, useState } from "react";
 
 const DESKTOP_WIDTH = 1440;
 const DESKTOP_HEIGHT = 900;
+const MOBILE_WIDTH = 390;
+const MOBILE_HEIGHT = 520;
 
 export function LiveProjectPreview() {
   const viewportRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
+  const [frame, setFrame] = useState({ width: DESKTOP_WIDTH, height: DESKTOP_HEIGHT, scale: 1 });
 
   useEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
 
-    const resize = () => setScale(viewport.clientWidth / DESKTOP_WIDTH);
+    const resize = () => {
+      const mobile = window.innerWidth <= 600;
+      const width = mobile ? MOBILE_WIDTH : DESKTOP_WIDTH;
+      const height = mobile ? MOBILE_HEIGHT : DESKTOP_HEIGHT;
+      setFrame({ width, height, scale: viewport.clientWidth / width });
+    };
     resize();
     const observer = new ResizeObserver(resize);
     observer.observe(viewport);
@@ -31,7 +38,7 @@ export function LiveProjectPreview() {
         sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
         referrerPolicy="strict-origin-when-cross-origin"
         allow="fullscreen"
-        style={{ width: DESKTOP_WIDTH, height: DESKTOP_HEIGHT, transform: `scale(${scale})` }}
+        style={{ width: frame.width, height: frame.height, transform: `scale(${frame.scale})` }}
       />
       <div className="live-project-mobile-fallback">
         <Image

@@ -100,15 +100,14 @@ button, a { -webkit-tap-highlight-color:transparent; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto!important; } *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; } }
 
-/* Scaled desktop website preview inside the Prodyous browser frame */
+/* Responsive live website previews inside the project browser frames */
 .live-project-viewport { position:relative; width:100%; aspect-ratio:8 / 5; overflow:hidden; background:#f4f0e7; }
-.live-project-frame { display:block; border:0; transform-origin:top left; background:white; }
+.live-project-frame { display:block; border:0; transform-origin:top left; background:white; touch-action:auto; }
 .live-project-mobile-fallback { display:none; position:absolute; inset:0; }
 .live-project-mobile-fallback.fallback-visible { display:block; }
 .live-project-mobile-fallback img { object-fit:cover; object-position:top center; }
 @media (max-width: 600px) {
-  .live-project-frame { display:none; }
-  .live-project-mobile-fallback { display:block; }
+  .live-project-viewport { aspect-ratio:3 / 4; }
 }
 
 .contact-honeypot { position:absolute!important; left:-9999px!important; width:1px!important; height:1px!important; overflow:hidden!important; }
