@@ -334,7 +334,7 @@ button, a { -webkit-tap-highlight-color:transparent; }
 
 /* Client rail */
 .client-rail { position:relative; overflow:hidden; border-bottom:1px solid var(--line); background:#08090a; }
-.client-rail-inner { min-height:154px; display:grid; grid-template-columns:250px minmax(0,1fr); align-items:center; gap:38px; }
+.client-rail-inner { min-height:128px; display:grid; grid-template-columns:250px minmax(0,1fr); align-items:center; gap:38px; }
 .client-rail-copy { align-self:stretch; display:flex; flex-direction:column; justify-content:center; padding-right:38px; border-right:1px solid var(--line); }
 .client-rail-copy p { margin:0; font-size:15px; font-weight:650; letter-spacing:-.02em; }
 .client-rail-copy span { margin-top:7px; color:#777c83; font-size:11px; line-height:1.45; }
@@ -342,16 +342,16 @@ button, a { -webkit-tap-highlight-color:transparent; }
 .client-marquee-track { display:flex; width:max-content; will-change:transform; animation:client-marquee 24s linear infinite; }
 .client-marquee:hover .client-marquee-track { animation-play-state:paused; }
 .client-logo-group { flex:0 0 auto; display:flex; align-items:center; gap:clamp(58px,7vw,105px); padding-right:clamp(58px,7vw,105px); }
-.client-logo { position:relative; flex:0 0 210px; width:210px; height:92px; opacity:.82; filter:saturate(.88); transition:opacity .25s,filter .25s; }
+.client-logo { position:relative; flex:0 0 210px; width:210px; height:74px; opacity:.82; filter:saturate(.88); transition:opacity .25s,filter .25s; }
 .client-logo img { object-fit:contain; }
 .client-logo:hover { opacity:1; filter:saturate(1); }
 @keyframes client-marquee { to { transform:translateX(-50%); } }
 @media (max-width:600px) {
-  .client-rail-inner { min-height:0; display:block; padding-block:28px; }
-  .client-rail-copy { display:block; padding:0 0 20px; border-right:0; }
+  .client-rail-inner { min-height:0; display:block; padding-block:20px; }
+  .client-rail-copy { display:block; padding:0 0 14px; border-right:0; }
   .client-rail-copy span { display:block; }
   .client-logo-group { gap:42px; padding-right:42px; }
-  .client-logo { flex-basis:170px; width:170px; height:76px; }
+  .client-logo { flex-basis:170px; width:170px; height:64px; }
 }
 @media (prefers-reduced-motion:reduce) {
   .client-marquee { mask-image:none; -webkit-mask-image:none; }
