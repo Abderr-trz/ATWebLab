@@ -2,12 +2,12 @@ import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const benefits = [
-  ["Design professionnel", "Une identité moderne conçue autour de votre activité."],
-  ["Mobile first", "Une expérience impeccable sur smartphone, tablette et ordinateur."],
-  ["Performance", "Des pages rapides et optimisées pour une meilleure expérience."],
-  ["Accompagnement", "Un suivi clair, de la première idée jusqu’à la mise en ligne."],
-  ["Solution adaptée", "Pas de template imposé : le site répond à vos vrais besoins."],
-  ["Contact direct", "Une communication simple et rapide pendant tout le projet."]
+  ["Design professionnel", "Un design soigné qui reflète votre activité et met vos services en valeur."],
+  ["Adapté à tous les écrans", "Une navigation claire et confortable sur smartphone, tablette et ordinateur."],
+  ["Rapidité et simplicité", "Des pages rapides, des informations faciles à trouver et des boutons de contact accessibles."],
+  ["Accompagnement de A à Z", "Nous vous guidons dans les choix du contenu, du design et des fonctionnalités jusqu’à la mise en ligne."],
+  ["Suivi après livraison", "Après la mise en ligne, nous restons disponibles pour vous aider à prendre en main votre site et répondre à vos questions, selon le suivi convenu."],
+  ["Échange direct et cadre clair", "Un interlocuteur unique, un devis détaillé et des étapes définies pour avancer sereinement."]
 ];
 
 export function WhyUs() {
