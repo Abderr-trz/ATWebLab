@@ -311,7 +311,6 @@ button, a { -webkit-tap-highlight-color:transparent; }
 @media (prefers-reduced-motion:reduce) {
   .network-field svg,.network-nodes .network-node-hot { animation:none; }
 }
-.live-project-static-image { object-fit:cover; object-position:top center; }
 .form-note a { color:#93989f; text-decoration:underline; text-underline-offset:2px; }
 
 /* Legal information */
