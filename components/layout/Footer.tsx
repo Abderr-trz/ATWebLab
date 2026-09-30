@@ -20,7 +20,7 @@ export function Footer() {
       </div>
       <div className="container footer-bottom">
         <p>© 2026 AT WebLab. Tous droits réservés.</p>
-        <a href="#">Mentions légales</a>
+        <a href="/mentions-legales">Mentions légales</a>
       </div>
     </footer>
   );

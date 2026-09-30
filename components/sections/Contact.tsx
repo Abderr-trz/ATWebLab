@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { ArrowUpRight, Instagram, Mail, MessageCircle } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { site } from "@/lib/site";
@@ -9,9 +9,13 @@ import { NetworkField } from "@/components/ui/NetworkField";
 export function Contact() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const submittingRef = useRef(false);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submittingRef.current) return;
+
+    submittingRef.current = true;
     const form = e.currentTarget;
     setStatus("sending");
     setErrorMessage("");
@@ -30,6 +34,8 @@ export function Contact() {
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "L’envoi a échoué.");
       setStatus("error");
+    } finally {
+      submittingRef.current = false;
     }
   }
   return (
@@ -54,7 +60,7 @@ export function Contact() {
             <label>Message<textarea name="message" required minLength={10} maxLength={3000} rows={5} placeholder="Parlez-nous de votre activité et de ce que vous souhaitez créer…" /></label>
             <button className="button button-light submit" type="submit" disabled={status === "sending"}>{status === "sending" ? "Envoi en cours…" : "Envoyer ma demande"} {status !== "sending" && <ArrowUpRight size={18} />}</button>
             {status === "error" && <p className="form-error" role="alert">{errorMessage}</p>}
-            <p className="form-note">En envoyant ce formulaire, vous acceptez d’être recontacté au sujet de votre projet.</p>
+            <p className="form-note">En envoyant ce formulaire, vous acceptez d’être recontacté au sujet de votre projet. <a href="/mentions-legales#donnees-formulaire">Informations sur les données</a></p>
           </form>}
         </Reveal>
       </div>
