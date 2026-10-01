@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const runtime = "nodejs";
 
-const recipient = "worldaround65@gmail.com";
+const recipient = "atweblab1@gmail.com";
 const MAX_BODY_BYTES = 16_384;
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
