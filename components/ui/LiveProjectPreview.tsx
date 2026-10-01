@@ -27,12 +27,12 @@ export function LiveProjectPreview() {
     <div ref={viewportRef} className="live-project-viewport">
       <iframe
         className="live-project-frame"
-        src="https://prodyous.co/"
+        src="https://prodyous.co/?embed=atweblab-v2"
         title="Aperçu interactif du site Prodyous"
-        loading="lazy"
+        loading="eager"
         sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
         referrerPolicy="strict-origin-when-cross-origin"
-        allow="fullscreen"
+        allow="autoplay; fullscreen; picture-in-picture"
         scrolling="yes"
         style={{ width: DESKTOP_WIDTH, height: DESKTOP_HEIGHT, transform: `scale(${scale})` }}
       />

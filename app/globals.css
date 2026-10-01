@@ -103,6 +103,7 @@ button, a { -webkit-tap-highlight-color:transparent; }
 /* Responsive live website previews inside the project browser frames */
 .live-project-viewport { position:relative; width:100%; aspect-ratio:8 / 5; overflow:hidden; background:#f4f0e7; }
 .live-project-frame { display:block; border:0; transform-origin:top left; background:white; touch-action:auto; }
+.prodyous .live-project-frame { background:#0a0a0a; }
 .live-project-mobile-fallback { display:none; position:absolute; inset:0; }
 .live-project-mobile-fallback.fallback-visible { display:block; }
 .live-project-mobile-fallback img { object-fit:cover; object-position:top center; }
