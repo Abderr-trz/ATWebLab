@@ -107,7 +107,9 @@ button, a { -webkit-tap-highlight-color:transparent; }
 .live-project-mobile-fallback.fallback-visible { display:block; }
 .live-project-mobile-fallback img { object-fit:cover; object-position:top center; }
 @media (max-width: 600px) {
-  .live-project-viewport { aspect-ratio:3 / 4; }
+  .live-project-viewport { aspect-ratio:auto; height:clamp(480px,145vw,560px); }
+  .live-project-frame { width:100%!important; height:100%!important; transform:none!important; overflow:auto; }
+  .live-project-mobile-fallback { display:none!important; }
 }
 
 .contact-honeypot { position:absolute!important; left:-9999px!important; width:1px!important; height:1px!important; overflow:hidden!important; }
