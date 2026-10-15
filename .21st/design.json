@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "project": {
+    "name": "at-weblab",
+    "productType": null,
+    "stack": [
+      "nextjs",
+      "react",
+      "tailwind-v3"
+    ]
+  },
+  "sources": {
+    "tokens": [
+      "app/globals.css"
+    ],
+    "components": [
+      "components/ui"
+    ],
+    "assets": [],
+    "instructions": []
+  },
+  "design": {
+    "colorMode": "dark",
+    "colors": {},
+    "typography": {},
+    "spacing": {},
+    "radius": {},
+    "shadows": {},
+    "motion": {},
+    "density": "unknown"
+  },
+  "components": {
+    "installed": [
+      "LiveDoumiPreview",
+      "LiveProjectPreview",
+      "NetworkField",
+      "Reveal",
+      "SectionHeading",
+      "WebDevCube",
+      "WhatsAppButton"
+    ],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [
+      "Preserve the existing dark editorial identity, typography, spacing, responsive behavior, and motion language",
+      "Reuse project tokens and existing UI primitives"
+    ],
+    "avoid": [
+      "Changing the homepage visual design or existing animations",
+      "Introducing generic templates or unnecessary dependencies"
+    ]
+  },
+  "decisions": [],
+  "evidence": [
+    {
+      "fact": "components.installed",
+      "source": "components/ui"
+    },
+    {
+      "fact": "design.colorMode:light",
+      "source": "app/globals.css"
+    },
+    {
+      "fact": "design.tokens",
+      "source": "app/globals.css"
+    },
+    {
+      "fact": "project.stack:nextjs",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:react",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:tailwind-v3",
+      "source": "package.json"
+    }
+  ],
+  "generatedAt": "2026-10-15T02:08:17.249Z"
+}

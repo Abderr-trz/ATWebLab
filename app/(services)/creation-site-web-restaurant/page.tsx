@@ -41,23 +41,22 @@ const faqs = [
   },
   {
     question: "Smash Burger est-il un restaurant client d’AT WebLab ?",
-    answer: "Non. Smash Burger est présenté ici comme un projet de démonstration destiné à illustrer une direction possible pour un site de restaurant.",
+    answer: "Non. Smash Burger est présenté ici comme un projet de démonstration interactif destiné à illustrer une direction possible pour un site de restaurant.",
   },
 ];
 
 function SmashBurgerDemo() {
   return (
-    <div className="restaurant-demo" role="img" aria-label="Maquette de démonstration Smash Burger pour un site de restaurant">
-      <div className="restaurant-demo-bar"><span /><span /><span /><small>Projet de démonstration</small></div>
-      <div className="restaurant-demo-body">
-        <div className="restaurant-demo-nav"><strong>SMASH BURGER</strong><span>Menu</span><span>Adresse</span></div>
-        <div className="restaurant-demo-content">
-          <p>BURGERS · SIDES · DRINKS</p>
-          <strong>Le smash.<br />Sans détour.</strong>
-          <span>Voir le menu</span>
-        </div>
-        <div className="restaurant-demo-dish" aria-hidden="true"><i /><i /><i /></div>
-      </div>
+    <div className="restaurant-demo">
+      <div className="restaurant-demo-bar"><span /><span /><span /><small>Aperçu interactif</small></div>
+      <iframe
+        className="restaurant-demo-frame"
+        src="https://smash-burger-joint.vercel.app/"
+        title="Aperçu interactif du projet Smash Burger"
+        loading="lazy"
+        sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+        referrerPolicy="strict-origin-when-cross-origin"
+      />
     </div>
   );
 }
@@ -95,11 +94,13 @@ export default function CreationSiteWebRestaurantPage() {
         { title: "Mises à jour organisées", description: "La méthode de mise à jour du menu et des informations est définie selon la fréquence de vos changements." },
       ]}
       showcase={{
-        eyebrow: "Concept · Projet de démonstration",
+        eyebrow: "Projet de démonstration · Aperçu interactif",
         title: "Smash Burger",
-        description: "Cette maquette conceptuelle illustre une direction visuelle possible pour un restaurant de burgers. Elle ne représente pas un client, un établissement réel ni une fonctionnalité déjà livrée.",
+        description: "Explorez directement ce projet de démonstration conçu pour illustrer une direction visuelle possible pour un restaurant de burgers. Il ne représente pas un client ni un établissement réel.",
         tags: ["Démonstration", "Restaurant", "Mobile-first"],
         visual: <SmashBurgerDemo />,
+        href: "https://smash-burger-joint.vercel.app/",
+        linkLabel: "Ouvrir le projet",
       }}
       processTitle="De votre carte à un site prêt à être consulté."
       processIntro="Le contenu réel de l’établissement guide chaque étape du projet."

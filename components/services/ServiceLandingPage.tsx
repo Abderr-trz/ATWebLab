@@ -42,6 +42,8 @@ type Showcase = {
   description: string;
   tags: string[];
   visual: ReactNode;
+  href?: string;
+  linkLabel?: string;
 };
 
 export type ServiceLandingPageProps = {
@@ -207,6 +209,11 @@ export function ServiceLandingPage(props: ServiceLandingPageProps) {
                 <div className="project-tags">
                   {props.showcase.tags.map((tag) => <span key={tag}>{tag}</span>)}
                 </div>
+                {props.showcase.href && (
+                  <a className="service-showcase-link" href={props.showcase.href} target="_blank" rel="noreferrer">
+                    {props.showcase.linkLabel ?? "Voir le projet"} <ArrowUpRight size={16} aria-hidden="true" />
+                  </a>
+                )}
               </Reveal>
             </div>
           </section>
