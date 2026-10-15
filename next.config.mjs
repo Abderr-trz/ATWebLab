@@ -8,7 +8,7 @@ const contentSecurityPolicy = [
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
   "connect-src 'self'",
-  "frame-src https://prodyous.co https://doumi-phisio.vercel.app",
+  "frame-src https://prodyous.co https://doumi-phisio.vercel.app https://smash-burger-joint.vercel.app",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
