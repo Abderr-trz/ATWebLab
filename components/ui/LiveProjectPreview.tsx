@@ -9,8 +9,10 @@ const DESKTOP_HEIGHT = 900;
 export function LiveProjectPreview() {
   const viewportRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const [interactive, setInteractive] = useState(false);
 
   useEffect(() => {
+    if (!interactive) return;
     const viewport = viewportRef.current;
     if (!viewport) return;
 
@@ -21,29 +23,35 @@ export function LiveProjectPreview() {
     const observer = new ResizeObserver(resize);
     observer.observe(viewport);
     return () => observer.disconnect();
-  }, []);
+  }, [interactive]);
 
   return (
-    <div ref={viewportRef} className="live-project-viewport">
-      <iframe
-        className="live-project-frame"
-        src="https://prodyous.co/?embed=atweblab-v2"
-        title="Aperçu interactif du site Prodyous"
-        loading="eager"
-        sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
-        referrerPolicy="strict-origin-when-cross-origin"
-        allow="autoplay; fullscreen; picture-in-picture"
-        scrolling="yes"
-        style={{ width: DESKTOP_WIDTH, height: DESKTOP_HEIGHT, transform: `scale(${scale})` }}
-      />
-      <div className="live-project-mobile-fallback">
+    <div ref={viewportRef} className={`live-project-viewport ${interactive ? "is-interactive" : ""}`}>
+      {interactive ? (
+        <iframe
+          className="live-project-frame"
+          src="https://prodyous.co/?embed=atweblab-v2"
+          title="Aperçu interactif du site Prodyous"
+          sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allow="autoplay; fullscreen; picture-in-picture"
+          scrolling="yes"
+          style={{ width: DESKTOP_WIDTH, height: DESKTOP_HEIGHT, transform: `scale(${scale})` }}
+        />
+      ) : (
+        <div className="live-project-snapshot">
         <Image
           src="/projects/prodyous-mobile.png"
           alt="Aperçu du site Prodyous"
           fill
-          sizes="(max-width: 600px) 100vw, 1px"
+          sizes="(max-width: 900px) calc(100vw - 32px), 65vw"
+          quality={70}
         />
-      </div>
+          <button type="button" className="live-project-launch" onClick={() => setInteractive(true)}>
+            Charger l’aperçu interactif
+          </button>
+        </div>
+      )}
     </div>
   );
 }

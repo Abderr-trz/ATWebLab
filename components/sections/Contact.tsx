@@ -45,7 +45,7 @@ export function Contact() {
         <Reveal className="contact-intro">
           <p className="section-number">07</p><h2>Parlons de votre projet.</h2><p>Décrivez-nous votre besoin. Nous reviendrons vers vous avec des prochaines étapes claires.</p>
           <div className="contact-links">
-            <a href={site.whatsapp} target="_blank" rel="noreferrer"><MessageCircle /><span><small>Réponse rapide</small>WhatsApp</span><ArrowUpRight /></a>
+            <a href={site.whatsapp} target="_blank" rel="noreferrer"><MessageCircle /><span><small>WhatsApp · Réponse rapide</small>{site.phone}</span><ArrowUpRight /></a>
             <a href={`mailto:${site.email}`}><Mail /><span><small>Email</small>{site.email}</span><ArrowUpRight /></a>
             <a href={site.instagram} target="_blank" rel="noreferrer"><Instagram /><span><small>Suivez-nous</small>Instagram</span><ArrowUpRight /></a>
           </div>

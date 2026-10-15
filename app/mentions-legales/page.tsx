@@ -1,6 +1,31 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/lib/site";
+
+const title = "Mentions légales";
+const description = "Consultez les mentions légales du site AT WebLab et les informations relatives aux données envoyées par le formulaire de contact.";
+
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: { canonical: "/mentions-legales" },
+  openGraph: {
+    title: `${title} | ${site.name}`,
+    description,
+    url: "/mentions-legales",
+    siteName: site.name,
+    locale: site.locale,
+    type: "website",
+    images: [{ url: site.logo, width: 264, height: 260, alt: "Logo AT WebLab" }],
+  },
+  twitter: {
+    card: "summary",
+    title: `${title} | ${site.name}`,
+    description,
+    images: [site.logo],
+  },
+};
 
 export default function MentionsLegales() {
   return (

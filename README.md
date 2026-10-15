@@ -102,6 +102,15 @@ Le projet peut être déployé directement sur Vercel :
 3. Vérifier le domaine d’envoi dans Resend.
 4. Déployer puis tester le formulaire de contact.
 
+### Changement du domaine officiel
+
+L'URL canonique du site est centralisée dans `lib/site.ts` via la propriété `site.url`.
+Après l'achat et la connexion d'un domaine, remplacez cette valeur par l'URL HTTPS du
+nouveau domaine. Les URL canoniques, les métadonnées sociales, le JSON-LD, `robots.txt`
+et `sitemap.xml` utiliseront alors automatiquement cette nouvelle origine. Configurez
+ensuite la redirection permanente de l'ancien domaine Vercel vers le domaine principal
+dans Vercel, puis ajoutez la nouvelle propriété dans Google Search Console.
+
 ## Qualité
 
 Avant chaque publication :

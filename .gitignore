@@ -10,3 +10,5 @@ npm-debug.log*
 .tmp-prodyous/
 .server-*.log
 .security-server-*.log
+
+.vercel

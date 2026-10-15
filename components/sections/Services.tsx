@@ -1,11 +1,12 @@
 import { ArrowUpRight, Check } from "lucide-react";
+import Link from "next/link";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { NetworkField } from "@/components/ui/NetworkField";
 
-const services = [
-  { title: "Site vitrine", desc: "Un site professionnel pour présenter votre activité, vos services et permettre à vos clients de vous contacter facilement.", items: ["Design moderne", "Responsive mobile", "Formulaire & WhatsApp", "Nom de domaine", "Mise en ligne"] },
-  { title: "Site web sur mesure", desc: "Une solution complète avec des fonctionnalités adaptées aux besoins spécifiques de votre activité.", items: ["Frontend & backend", "Base de données", "Fonctionnalités personnalisées", "APIs", "Dashboard si nécessaire"] },
+const services: Array<{ title: string; desc: string; items: string[]; href?: string }> = [
+  { title: "Site vitrine", desc: "Un site professionnel pour présenter votre activité, vos services et permettre à vos clients de vous contacter facilement.", items: ["Design moderne", "Responsive mobile", "Formulaire & WhatsApp", "Nom de domaine", "Mise en ligne"], href: "/creation-site-web-maroc" },
+  { title: "Site web sur mesure", desc: "Une solution complète avec des fonctionnalités adaptées aux besoins spécifiques de votre activité.", items: ["Frontend & backend", "Base de données", "Fonctionnalités personnalisées", "APIs", "Dashboard si nécessaire"], href: "/creation-site-web-maroc" },
   { title: "Boutique Shopify", desc: "Création ou refonte d’une boutique professionnelle pensée pour présenter et vendre vos produits efficacement.", items: ["Configuration Shopify", "Design & pages essentielles", "Produits & collections", "Responsive", "Paiement & livraison"] }
 ];
 
@@ -21,9 +22,17 @@ export function Services() {
               <div className="service-index">0{i + 1}</div>
               <div className="service-main"><h3>{service.title}</h3><p>{service.desc}</p></div>
               <ul>{service.items.map(item => <li key={item}><Check size={15} />{item}</li>)}</ul>
-              <a href="#contact" aria-label={`Demander un devis pour ${service.title}`}>Demander un devis <ArrowUpRight size={17} /></a>
+              <div className="service-actions">
+                <a href="#contact" aria-label={`Demander un devis pour ${service.title}`}>Demander un devis <ArrowUpRight size={17} /></a>
+                {service.href && <Link className="service-more" href={service.href}>En savoir plus</Link>}
+              </div>
             </Reveal>
           ))}
+        </div>
+        <div className="service-sector-links" aria-label="Solutions web par métier">
+          <span>Solutions par métier</span>
+          <Link href="/creation-site-web-restaurant">Sites pour restaurants <ArrowUpRight size={14} aria-hidden="true" /></Link>
+          <Link href="/creation-site-web-photographe">Portfolios pour photographes <ArrowUpRight size={14} aria-hidden="true" /></Link>
         </div>
       </div>
     </section>

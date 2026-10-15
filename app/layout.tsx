@@ -1,28 +1,67 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { site } from "@/lib/site";
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://atweblab.com"),
-  title: "AT WebLab | Création de Sites Web au Maroc",
-  description: "AT WebLab crée des sites vitrines, sites web sur mesure et boutiques Shopify modernes pour entreprises et entrepreneurs au Maroc.",
-  openGraph: {
-    title: "AT WebLab | Création de Sites Web au Maroc",
-    description: "Des sites modernes, rapides et pensés pour transformer vos visiteurs en clients.",
-    url: "https://atweblab.com",
-    siteName: "AT WebLab",
-    locale: "fr_MA",
-    type: "website"
+  metadataBase: new URL(site.url),
+  title: {
+    default: site.name,
+    template: `%s | ${site.name}`,
   },
-  icons: { icon: "/logo.png" }
+  icons: {
+    icon: site.logo,
+    shortcut: site.logo,
+    apple: site.logo,
+  },
+};
+
+const globalJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${site.url}/#organization`,
+      name: site.name,
+      url: `${site.url}/`,
+      logo: {
+        "@type": "ImageObject",
+        url: new URL(site.logo, site.url).toString(),
+      },
+      email: site.email,
+      telephone: site.phoneInternational,
+      areaServed: { "@type": "Country", name: "Morocco" },
+      sameAs: [site.instagram],
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "customer service",
+        telephone: site.phoneInternational,
+        email: site.email,
+        availableLanguage: ["French"],
+        areaServed: "MA",
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${site.url}/#website`,
+      url: `${site.url}/`,
+      name: site.name,
+      inLanguage: "fr-MA",
+      publisher: { "@id": `${site.url}/#organization` },
+    },
+  ],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fr" className="scroll-smooth">
-      <body className={`${geist.variable} bg-ink text-paper antialiased`}>{children}</body>
+      <body className={`${geist.variable} bg-ink text-paper antialiased`}>
+        <JsonLd data={globalJsonLd} />
+        {children}
+      </body>
     </html>
   );
 }

@@ -9,7 +9,6 @@
     "lint": "eslint app components lib next.config.mjs postcss.config.mjs tailwind.config.ts eslint.config.mjs"
   },
   "dependencies": {
-    "framer-motion": "^11.11.17",
     "lucide-react": "^0.468.0",
     "next": "^16.3.7",
     "react": "^19.0.0",
