@@ -107,7 +107,7 @@ export default function ImmersiveExperience(){
  useEffect(()=>{const media=window.matchMedia("(prefers-reduced-motion: reduce)");const change=()=>setReduced(media.matches);change();media.addEventListener("change",change);try{const c=document.createElement("canvas");setWebgl(Boolean(c.getContext("webgl2")||c.getContext("webgl")))}catch{setWebgl(false)}return()=>media.removeEventListener("change",change)},[]);
  useEffect(()=>{
   let pending=false;
-  const update=()=>{pending=false;const el=root.current;if(!el)return;const range=Math.max(1,el.offsetHeight-window.innerHeight);const p=clamp((window.scrollY-el.offsetTop)/range);progress.current=p;setPosition(Math.round(p*100))};
+  const update=()=>{pending=false;const el=root.current;if(!el)return;const chapters=el.querySelector(".ttl3-chapters") as HTMLElement|null;const range=Math.max(1,chapters?.offsetHeight||el.offsetHeight);const p=clamp((window.scrollY-el.offsetTop)/range);progress.current=p;setPosition(Math.round(p*100))};
   const onScroll=()=>{if(!pending){pending=true;requestAnimationFrame(update)}};
   update();window.addEventListener("scroll",onScroll,{passive:true});window.addEventListener("resize",onScroll);
   return()=>{window.removeEventListener("scroll",onScroll);window.removeEventListener("resize",onScroll)}
