@@ -10,7 +10,7 @@ const works=[
  {name:"MOTION / HORIZON",category:"MOTION",number:"03",desc:"Une direction cinématographique imaginée autour du mouvement, de la lumière et du voyage.",tone:"motion"}
 ];
 function LensCanvas({focus,entering}:{focus:number;entering:boolean}){
- const canvas=useRef<HTMLCanvasElement>(null);
+ const canvas=useRef<HTMLCanvasElement>(null);\n const focusRef=useRef(focus);\n const enteringRef=useRef(entering);\n useEffect(()=>{focusRef.current=focus;enteringRef.current=entering;},[focus,entering]);
  useEffect(()=>{
   let active=true,raf=0,renderer:import("three").WebGLRenderer|undefined;
   let dispose=()=>{};
