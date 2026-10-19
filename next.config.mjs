@@ -5,7 +5,7 @@ const contentSecurityPolicy = [
   `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""}`,
   "script-src-attr 'none'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  "img-src 'self' data: blob: https://images.unsplash.com",
   "font-src 'self' data:",
   "connect-src 'self'",
   "frame-src https://prodyous.co https://doumi-phisio.vercel.app https://smash-burger-joint.vercel.app",
@@ -40,7 +40,7 @@ const securityHeaders = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: { formats: ["image/avif", "image/webp"] },
+  images: { formats: ["image/avif", "image/webp"], qualities: [70, 75] },
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
   async headers() {
