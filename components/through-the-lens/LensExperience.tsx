@@ -45,12 +45,12 @@ function LensCanvas({focus,entering}:{focus:number;entering:boolean}){
     size();const observer=new ResizeObserver(size);observer.observe(canvas.current);
     let mouseX=0,mouseY=0;const pointer=(e:PointerEvent)=>{const b=canvas.current?.getBoundingClientRect();if(!b)return;mouseX=((e.clientX-b.left)/b.width-.5)*.36;mouseY=((e.clientY-b.top)/b.height-.5)*.3};
     canvas.current.addEventListener("pointermove",pointer);
-    const animate=()=>{if(!renderer||!active)return;group.rotation.y+=(mouseX-group.rotation.y)*.04;group.rotation.x+=(-mouseY-group.rotation.x)*.04;group.rotation.z+=.0012;iris.scale.setScalar(Math.max(.08,1-focus/115));camera.position.z+=( (entering?2.2:9)-camera.position.z)*.035;renderer.render(scene,camera);raf=requestAnimationFrame(animate)};
+    const animate=()=>{if(!renderer||!active)return;group.rotation.y+=(mouseX-group.rotation.y)*.04;group.rotation.x+=(-mouseY-group.rotation.x)*.04;group.rotation.z+=.0012;iris.scale.setScalar(Math.max(.08,1-focusRef.current/115));camera.position.z+=( (enteringRef.current?2.2:9)-camera.position.z)*.035;renderer.render(scene,camera);raf=requestAnimationFrame(animate)};
     animate();const el=canvas.current;
     dispose=()=>{cancelAnimationFrame(raf);observer.disconnect();el?.removeEventListener("pointermove",pointer);geom.forEach(g=>g.dispose());[metal,edge,glass,inner,bladeMaterial].forEach(m=>m.dispose());scene.traverse(o=>{if(o instanceof THREE.Mesh){const materials=Array.isArray(o.material)?o.material:[o.material];materials.forEach(m=>m.dispose())}});renderer?.dispose()};
    }catch{if(canvas.current)canvas.current.style.display="none"}
   };init();return()=>{active=false;dispose()};
- },[focus,entering]);
+ },[]);
  return <canvas ref={canvas} className="ttl-lens-canvas" aria-hidden="true"/>;
 }
 export default function LensExperience(){
