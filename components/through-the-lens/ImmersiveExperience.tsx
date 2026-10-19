@@ -1,141 +1,134 @@
 "use client";
-
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowUpRight } from "lucide-react";
 
-type Phase="intro"|"transition"|"gallery"|"project";
-type Work={id:string,title:string,category:string,year:string,subtitle:string,description:string,images:string[]};
-const photo=(id:string,w=1200)=>`https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=82`;
-const works:Work[]=[
- {id:"01",title:"HUMAN / FORM",category:"PORTRAIT",year:"2026",subtitle:"The beauty of being human.",description:"Une étude photographique fictive sur la présence, la silhouette et la lumière. Une direction artistique conçue pour montrer comment un portfolio peut raconter une histoire.",images:[photo("photo-1534528741775-53994a69daeb"),photo("photo-1524504388940-b1c1722653e1"),photo("photo-1506794778202-cad84cf45f1d")]},
- {id:"02",title:"THE / EDITION",category:"FASHION EDITORIAL",year:"2026",subtitle:"A new perspective on style.",description:"Un concept éditorial mêlant mode, architecture et lumière naturelle. Chaque série est présentée comme un chapitre, avec son identité et son rythme.",images:[photo("photo-1539109136881-3be0616acf4b"),photo("photo-1483985988355-763728e1935b"),photo("photo-1529139574466-a303027c1d8b")]},
- {id:"03",title:"AFTER / LIGHT",category:"CINEMATIC STORIES",year:"2026",subtitle:"Where the light becomes a story.",description:"Un univers de paysages et de narration visuelle, pensé pour un vidéaste ou un réalisateur souhaitant présenter ses films dans une expérience immersive.",images:[photo("photo-1470770841072-f978cf4d019e"),photo("photo-1500534623283-312aade485b7"),photo("photo-1464822759023-fed622ff2c3b")]}
+const image=(id:string,w=1400)=>`https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=85`;
+const collections=[
+ {index:"01",label:"PORTRAIT STUDIES",title:"HUMAN / FORM",sub:"The art of presence.",description:"Une exploration éditoriale du portrait, de la lumière et des expressions. Projet fictif conçu pour démontrer une expérience de portfolio premium.",photos:[image("photo-1534528741775-53994a69daeb"),image("photo-1524504388940-b1c1722653e1"),image("photo-1506794778202-cad84cf45f1d"),image("photo-1531123897727-8f129e1688ce")]},
+ {index:"02",label:"FASHION EDITORIAL",title:"THE / EDITION",sub:"Style is a point of view.",description:"Un récit visuel mêlant silhouettes, textures et attitude. Une direction artistique de démonstration pour photographes de mode et studios créatifs.",photos:[image("photo-1539109136881-3be0616acf4b"),image("photo-1483985988355-763728e1935b"),image("photo-1529139574466-a303027c1d8b"),image("photo-1487222477894-8943e31ef7b2")]},
+ {index:"03",label:"CINEMATIC LANDSCAPES",title:"AFTER / LIGHT",sub:"A story beyond the horizon.",description:"Une collection d'atmosphères cinématographiques et de paysages, imaginée pour illustrer le portfolio immersif d'un réalisateur.",photos:[image("photo-1470770841072-f978cf4d019e"),image("photo-1500534623283-312aade485b7"),image("photo-1464822759023-fed622ff2c3b"),image("photo-1441974231531-c6227db76b6e")]}
 ];
-
-function useReducedMotion(){const [reduced,setReduced]=useState(false);useEffect(()=>{const m=window.matchMedia("(prefers-reduced-motion: reduce)");const cb=()=>setReduced(m.matches);cb();m.addEventListener("change",cb);return()=>m.removeEventListener("change",cb)},[]);return reduced}
-
-function CinematicScene({phase,focus,active,onEntered}:{phase:Phase;focus:number;active:number;onEntered:()=>void}){
+const clamp=(v:number,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const smooth=(a:number,b:number,v:number)=>{const t=clamp((v-a)/(b-a));return t*t*(3-2*t)};
+function World({progress,reduced}:{progress:React.RefObject<number>;reduced:boolean}){
  const canvas=useRef<HTMLCanvasElement>(null);
- const data=useRef({phase,focus,active,onEntered});data.current={phase,focus,active,onEntered};
+ const motion=useRef(reduced);motion.current=reduced;
  useEffect(()=>{
   const el=canvas.current;if(!el)return;
-  let disposed=false,raf=0;let renderer:THREE.WebGLRenderer;
-  const scene=new THREE.Scene();scene.background=new THREE.Color("#08090d");scene.fog=new THREE.FogExp2("#08090d",.027);
-  const camera=new THREE.PerspectiveCamera(45,1,.1,200);camera.position.set(0,0,11);
+  let renderer:THREE.WebGLRenderer;
+  try{renderer=new THREE.WebGLRenderer({canvas:el,antialias:true,powerPreference:"high-performance"});}catch{el.style.display="none";return}
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.6));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;
+  const scene=new THREE.Scene();scene.background=new THREE.Color("#07090c");scene.fog=new THREE.FogExp2("#07090c",.019);
+  const camera=new THREE.PerspectiveCamera(38,1,.1,180);
+  const objects:THREE.BufferGeometry[]=[];const mats:THREE.Material[]=[];const texs:THREE.Texture[]=[];
+  const geom=<T extends THREE.BufferGeometry>(g:T)=>{objects.push(g);return g};
+  const mat=<T extends THREE.Material>(m:T)=>{mats.push(m);return m};
+  const black=mat(new THREE.MeshStandardMaterial({color:0x15191e,metalness:.87,roughness:.22,side:THREE.DoubleSide}));
+  const metal=mat(new THREE.MeshStandardMaterial({color:0x81796f,metalness:.85,roughness:.23,side:THREE.DoubleSide}));
+  const dark=mat(new THREE.MeshBasicMaterial({color:0x020406,side:THREE.DoubleSide}));
+  const glass=mat(new THREE.MeshPhysicalMaterial({color:0x1b5262,metalness:.25,roughness:.08,clearcoat:1,transparent:true,opacity:.84,side:THREE.DoubleSide}));
+  const ringmat=mat(new THREE.MeshBasicMaterial({color:0xe8aa83,transparent:true,opacity:.45}));
   const lens=new THREE.Group();scene.add(lens);
-  const gallery=new THREE.Group();gallery.position.z=-24;scene.add(gallery);
-  const geometries:THREE.BufferGeometry[]=[];const materials:THREE.Material[]=[];const textures:THREE.Texture[]=[];
-  const trackG=(g:THREE.BufferGeometry)=>{geometries.push(g);return g};
-  const trackM=<T extends THREE.Material>(m:T)=>{materials.push(m);return m};
-  const metal=trackM(new THREE.MeshStandardMaterial({color:0x171a1f,metalness:.92,roughness:.22}));
-  const trim=trackM(new THREE.MeshStandardMaterial({color:0x9a8273,metalness:.82,roughness:.19}));
-  const black=trackM(new THREE.MeshStandardMaterial({color:0x050709,metalness:.5,roughness:.12,side:THREE.DoubleSide}));
-  const glass=trackM(new THREE.MeshPhysicalMaterial({color:0x1a3949,metalness:.2,roughness:.08,clearcoat:1,clearcoatRoughness:.04,transparent:true,opacity:.84,side:THREE.DoubleSide}));
-  const warm=trackM(new THREE.MeshBasicMaterial({color:0xe3b295,transparent:true,opacity:.25}));
-  const mesh=(parent:THREE.Group,g:THREE.BufferGeometry,m:THREE.Material,x=0,y=0,z=0)=>{const o=new THREE.Mesh(trackG(g),m);o.position.set(x,y,z);parent.add(o);return o};
-  // A detailed mechanical lens barrel with distinct metallic, knurled and optical layers.
-  const barrel=mesh(lens,new THREE.CylinderGeometry(2.25,2.05,1.85,96,1,true),metal);barrel.rotation.x=Math.PI/2;
-  for(const [radius,tube,z,mat] of [[2.28,.12,.96,trim],[2.15,.11,1.05,metal],[1.99,.065,1.12,trim],[1.87,.085,1.18,metal],[1.65,.05,1.27,trim],[1.42,.018,1.37,warm]] as const){mesh(lens,new THREE.TorusGeometry(radius,tube,12,112),mat,0,0,z)}
-  for(let i=0;i<56;i++){const a=i*Math.PI*2/56;const bar=mesh(lens,new THREE.BoxGeometry(.035,.17,.025),trim,Math.sin(a)*2.22,Math.cos(a)*2.22,.79);bar.rotation.z=-a}
-  mesh(lens,new THREE.CircleGeometry(1.84,96),glass,0,0,1.2);
-  mesh(lens,new THREE.CircleGeometry(1.55,96),black,0,0,1.29);
-  const iris=new THREE.Group();iris.position.z=1.32;lens.add(iris);
-  const blade=trackM(new THREE.MeshStandardMaterial({color:0x0b1017,metalness:.75,roughness:.25,side:THREE.DoubleSide}));
-  for(let i=0;i<8;i++){const shape=new THREE.Shape();shape.moveTo(-.12,-.15);shape.lineTo(1.75,-.65);shape.lineTo(1.72,.42);shape.lineTo(.03,.4);shape.closePath();const b=mesh(iris,new THREE.ShapeGeometry(shape),blade);b.rotation.z=i*Math.PI/4}
-  const optical=mesh(lens,new THREE.CircleGeometry(1.02,96),glass,0,0,1.38);
-  const flare=mesh(lens,new THREE.TorusGeometry(.92,.008,8,96),warm,0,0,1.41);flare.scale.y=.72;
-  const lightA=new THREE.PointLight(0xffad83,110,28);lightA.position.set(-5,4,7);scene.add(lightA);
-  const lightB=new THREE.PointLight(0x7cbbde,95,26);lightB.position.set(5,-3,6);scene.add(lightB);
-  scene.add(new THREE.AmbientLight(0xffffff,.9));
-  // The visitor travels into a spatial exhibition with actual photographic panels.
-  const frameMat=trackM(new THREE.MeshStandardMaterial({color:0x9a7b6a,metalness:.7,roughness:.32}));
-  const panelGeo=trackG(new THREE.PlaneGeometry(4.1,5.2));
-  const borderGeo=trackG(new THREE.BoxGeometry(4.28,5.38,.12));
-  const panels:THREE.Mesh[]=[];
+  function add(g:THREE.BufferGeometry,m:THREE.Material,parent:THREE.Group=lens,z=0){const mesh=new THREE.Mesh(geom(g),m);mesh.position.z=z;parent.add(mesh);return mesh}
+  const body=add(new THREE.CylinderGeometry(2.1,1.98,2.4,100,1,true),black);body.rotation.x=Math.PI/2;
+  const back=add(new THREE.CylinderGeometry(2.02,2.02,.14,96),black);back.rotation.x=Math.PI/2;back.position.z=-1.14;
+  for(const [r,t,z] of [[2.15,.1,1.2],[2.03,.08,1.29],[1.91,.04,1.34],[1.75,.065,1.38],[1.58,.03,1.43],[1.24,.012,1.54]] as const)add(new THREE.TorusGeometry(r,t,12,112),r===1.24?ringmat:metal,lens,z);
+  for(let i=0;i<72;i++){const a=i*Math.PI*2/72;const groove=add(new THREE.BoxGeometry(.027,.13,.03),metal,lens,.9);groove.position.x=Math.sin(a)*2.09;groove.position.y=Math.cos(a)*2.09;groove.rotation.z=-a}
+  add(new THREE.CircleGeometry(1.72,96),glass,lens,1.42);
+  add(new THREE.CircleGeometry(1.52,96),dark,lens,1.48);
+  const iris=new THREE.Group();iris.position.z=1.51;lens.add(iris);
+  const bladeMat=mat(new THREE.MeshStandardMaterial({color:0x080d12,metalness:.75,roughness:.28,side:THREE.DoubleSide}));
+  for(let i=0;i<9;i++){const shape=new THREE.Shape();shape.moveTo(-.12,-.16);shape.lineTo(1.68,-.6);shape.lineTo(1.68,.35);shape.lineTo(.05,.4);shape.closePath();const blade=add(new THREE.ShapeGeometry(shape),bladeMat,iris);blade.rotation.z=i*Math.PI*2/9}
+  add(new THREE.CircleGeometry(.7,80),glass,lens,1.55);
+  const frontGlow=add(new THREE.TorusGeometry(.79,.009,8,96),ringmat,lens,1.57);frontGlow.scale.y=.88;
+  scene.add(new THREE.AmbientLight(0xffffff,.8));
+  const key=new THREE.PointLight(0xffb18a,110,30);key.position.set(-4,5,6);scene.add(key);
+  const rim=new THREE.PointLight(0x80badc,105,30);rim.position.set(5,-3,5);scene.add(rim);
+  // A gallery with nine physical photographic prints, arranged along a curved exhibition path.
+  const gallery=new THREE.Group();gallery.position.z=-23;scene.add(gallery);
   const loader=new THREE.TextureLoader();
-  works.forEach((work,i)=>{
-    const holder=new THREE.Group();holder.position.set((i-1)*5.4,0,-i*.4);gallery.add(holder);
-    const frame=new THREE.Mesh(borderGeo,frameMat);frame.position.z=-.08;holder.add(frame);
-    const imageMaterial=trackM(new THREE.MeshBasicMaterial({color:0x2b2a2b,side:THREE.DoubleSide}));
-    const plane=new THREE.Mesh(panelGeo,imageMaterial);holder.add(plane);
-    loader.load(work.images[0],tex=>{if(disposed){tex.dispose();return}tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=4;textures.push(tex);imageMaterial.map=tex;imageMaterial.color.set("#ffffff");imageMaterial.needsUpdate=true},undefined,()=>{});
-    const pedestal=mesh(holder,new THREE.BoxGeometry(4.5,.04,2),metal,0,-3.4,-.3);pedestal.rotation.x=.05;
+  const frames:THREE.Group[]=[];
+  const planeGeo=geom(new THREE.PlaneGeometry(5.2,6.6));
+  const frameGeo=geom(new THREE.BoxGeometry(5.42,6.82,.12));
+  const borderMat=mat(new THREE.MeshStandardMaterial({color:0x725e50,metalness:.68,roughness:.33}));
+  const allPhotos=collections.flatMap(c=>c.photos.slice(0,3));
+  allPhotos.forEach((url,i)=>{
+   const g=new THREE.Group();const section=Math.floor(i/3);const within=i%3;
+   g.position.set((within-1)*6.3,0,-section*13);g.rotation.y=(within-1)*-.1;
+   const frame=new THREE.Mesh(frameGeo,borderMat);frame.position.z=-.12;g.add(frame);
+   const pm=mat(new THREE.MeshBasicMaterial({color:0x34313a,side:THREE.DoubleSide}));
+   const panel=new THREE.Mesh(planeGeo,pm);g.add(panel);gallery.add(g);frames.push(g);
+   loader.load(url,t=>{if(!el.isConnected){t.dispose();return}t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;texs.push(t);pm.map=t;pm.color.set(0xffffff);pm.needsUpdate=true},undefined,()=>{});
   });
-  // Architectural light beams and floor lines for depth.
-  const lineMaterial=trackM(new THREE.LineBasicMaterial({color:0x775b50,transparent:true,opacity:.3}));
-  for(let i=-7;i<=7;i++){const pts=[new THREE.Vector3(i*1.6,-3.3,2),new THREE.Vector3(i*1.6,-3.3,-70)];const g=trackG(new THREE.BufferGeometry().setFromPoints(pts));gallery.add(new THREE.Line(g,lineMaterial))}
-  let px=0,py=0,drag=false,lastX=0,velocity=0,entered=false;
-  const move=(e:PointerEvent)=>{const rect=el.getBoundingClientRect();px=((e.clientX-rect.left)/rect.width-.5)*2;py=((e.clientY-rect.top)/rect.height-.5)*2;if(drag)velocity+=(e.clientX-lastX)*.006;lastX=e.clientX};
-  const down=(e:PointerEvent)=>{drag=true;lastX=e.clientX;el.setPointerCapture?.(e.pointerId)};
-  const up=()=>{drag=false};
-  el.addEventListener("pointermove",move);el.addEventListener("pointerdown",down);el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);
-  const resize=()=>{if(!renderer)return;const w=Math.max(1,el.clientWidth),h=Math.max(1,el.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
-  const init=()=>{try{renderer=new THREE.WebGLRenderer({canvas:el,antialias:true,alpha:false,powerPreference:"high-performance"});renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.7));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;resize()}catch{el.style.display="none";return false}return true};
-  if(!init())return;
-  const observer=new ResizeObserver(resize);observer.observe(el);
-  const clock=new THREE.Clock();let camZ=11,camX=0;
-  const tick=()=>{
-    if(disposed)return;
-    const delta=Math.min(clock.getDelta(),.05);const t=clock.elapsedTime;const state=data.current;
-    const inGallery=state.phase==="gallery"||state.phase==="project";
-    const transitioning=state.phase==="transition";
-    lens.visible=!inGallery;
-    lens.rotation.y+=(px*.2+velocity-lens.rotation.y)*.045;
-    lens.rotation.x+=(-py*.12-lens.rotation.x)*.045;
-    lens.rotation.z=Math.sin(t*.4)*.015;
-    iris.scale.setScalar(Math.max(.08,1-state.focus/120));
-    iris.rotation.z=t*.025;
-    optical.material=glass;
-    flare.material=warm;warm.opacity=.15+state.focus/450+Math.sin(t*2)*.04;
-    const targetZ=inGallery?-15:transitioning?-13:11;
-    camZ+=(targetZ-camZ)*Math.min(1,delta*(transitioning?2.5:4));
-    const targetX=inGallery?(state.active-1)*5.4:0;
-    camX+=(targetX-camX)*Math.min(1,delta*2.5);
-    camera.position.set(camX+(inGallery?px*.22:0),inGallery?py*.14:0,camZ);
-    camera.lookAt(camX*.92,0,inGallery?-24:0);
-    gallery.visible=inGallery||transitioning;
-    gallery.children.forEach((child,i)=>{if(child instanceof THREE.Group)child.rotation.y=Math.sin(t*.45+i)*.015});
-    if(transitioning&&!entered&&camZ< -10){entered=true;data.current.onEntered()}
-    if(!transitioning)entered=false;
-    renderer.render(scene,camera);velocity*=.92;raf=requestAnimationFrame(tick)
-  };tick();
-  return()=>{disposed=true;cancelAnimationFrame(raf);observer.disconnect();el.removeEventListener("pointermove",move);el.removeEventListener("pointerdown",down);el.removeEventListener("pointerup",up);el.removeEventListener("pointercancel",up);textures.forEach(x=>x.dispose());geometries.forEach(x=>x.dispose());materials.forEach(x=>x.dispose());renderer.dispose()};
- },[]);
- return <canvas ref={canvas} className="ttl2-canvas" aria-label="Scène interactive en trois dimensions avec objectif photographique et galerie d'art" role="img"/>;
+  const floorMat=mat(new THREE.MeshStandardMaterial({color:0x0e1013,roughness:.35,metalness:.2}));
+  const floor=new THREE.Mesh(geom(new THREE.PlaneGeometry(80,100)),floorMat);floor.rotation.x=-Math.PI/2;floor.position.set(0,-4,-43);gallery.add(floor);
+  const pathMat=mat(new THREE.LineBasicMaterial({color:0x8b6c5b,transparent:true,opacity:.25}));
+  for(let i=-8;i<=8;i++){const line=new THREE.Line(geom(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(i*1.6,-3.98,5),new THREE.Vector3(i*1.6,-3.98,-90)])),pathMat);gallery.add(line)}
+  let frameId=0,disposed=false,previous=0;
+  const resize=()=>{const w=Math.max(el.clientWidth,1),h=Math.max(el.clientHeight,1);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
+  resize();const observer=new ResizeObserver(resize);observer.observe(el);
+  const clock=new THREE.Clock();
+  const draw=()=>{
+   if(disposed)return;
+   const dt=Math.min(clock.getDelta(),.06);
+   const target=motion.current?Math.round(progress.current*4)/4:progress.current;
+   previous+=(target-previous)*Math.min(1,dt*(motion.current?15:2.4));
+   const p=previous;
+   const entering=smooth(.10,.28,p);
+   lens.position.z=-entering*7;
+   lens.scale.setScalar(1+entering*.7);
+   lens.rotation.y=Math.sin(clock.elapsedTime*.25)*.09*(1-entering);
+   lens.rotation.x=Math.cos(clock.elapsedTime*.3)*.06*(1-entering);
+   iris.scale.setScalar(1-smooth(.06,.21,p)*.87);
+   iris.rotation.z=p*1.6;
+   lens.visible=p<.31;
+   gallery.visible=p>.22;
+   const walk=smooth(.25,.91,p);
+   const sectionWalk=walk*2;
+   camera.position.set(Math.sin(walk*Math.PI*2)*.42,Math.sin(walk*8)*.12,11-entering*23-walk*26);
+   camera.lookAt(Math.sin(walk*6)*.15,0,camera.position.z-12);
+   frames.forEach((g,i)=>{g.rotation.y=(i%3-1)*-.1+Math.sin(clock.elapsedTime*.32+i)*.013});
+   ringmat.opacity=.24+Math.sin(clock.elapsedTime*1.4)*.09;
+   renderer.render(scene,camera);
+   frameId=requestAnimationFrame(draw)
+  };draw();
+  return()=>{disposed=true;cancelAnimationFrame(frameId);observer.disconnect();objects.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());texs.forEach(t=>t.dispose());renderer.dispose()};
+ },[progress]);
+ return <canvas ref={canvas} className="ttl3-canvas" aria-hidden="true"/>;
 }
-
-export default function ThroughTheLens(){
- const [phase,setPhase]=useState<Phase>("intro");
- const [focus,setFocus]=useState(12);
- const [active,setActive]=useState(1);
+export default function ImmersiveExperience(){
+ const root=useRef<HTMLElement>(null);
+ const progress=useRef(0);
+ const [position,setPosition]=useState(0);
  const [reduced,setReduced]=useState(false);
- const [sound,setSound]=useState(false);
  const [webgl,setWebgl]=useState(true);
- const done=useCallback(()=>setPhase("gallery"),[]);
- useEffect(()=>{setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);try{const c=document.createElement("canvas");setWebgl(!!(c.getContext("webgl2")||c.getContext("webgl")))}catch{setWebgl(false)}},[]);
- const enter=()=>setPhase(reduced||!webgl?"gallery":"transition");
- const next=(n:number)=>setActive((n+works.length)%works.length);
- const gallery=phase==="gallery"||phase==="project";
- return <main className="ttl2">
-   <header className="ttl2-nav"><Link href="/#realisations"><ArrowLeft size={15}/> AT WEBLAB®</Link><span>EXPERIMENT 001 / THROUGH THE LENS</span><Link href="/#contact">LET'S CREATE <ArrowUpRight size={15}/></Link></header>
-   {webgl&&<CinematicScene phase={phase} focus={focus} active={active} onEntered={done}/>}
-   {!webgl&&<div className="ttl2-fallback" style={{backgroundImage:`linear-gradient(#09090cb3,#09090cbd),url(${works[active].images[0]})`}}/>}
-   <div className="ttl2-vignette" aria-hidden="true"/>
-   {(phase==="intro"||phase==="transition")&&<section className={`ttl2-hero ${phase==="transition"?"ttl2-fade":""}`}>
-     <div className="ttl2-hero-title"><span className="ttl2-eyebrow">AT WEBLAB PRESENTS / A CREATIVE EXPERIMENT</span><h1>THROUGH<br/>THE <em>LENS.</em></h1><p>Don't just see the work.<br/>Step inside it.</p></div>
-     <div className="ttl2-focus"><div className="ttl2-focus-heading"><label htmlFor="ttl2-range">FIND YOUR PERSPECTIVE</label><span>{focus}%</span></div><input id="ttl2-range" type="range" min="0" max="100" value={focus} onChange={e=>setFocus(+e.target.value)}/><div className="ttl2-focus-actions"><button onClick={enter} disabled={focus<78||phase==="transition"}>ENTER THE EXPERIENCE <ArrowRight size={17}/></button><button onClick={done}>SKIP INTRO ↗</button></div></div>
-     <span className="ttl2-edge">SCROLL INTO A DIFFERENT PERSPECTIVE</span>
-   </section>}
-   {gallery&&<section className="ttl2-gallery">
-     <div className="ttl2-gallery-top"><span className="ttl2-eyebrow">CURATED STORIES / CONCEPT PORTFOLIO</span><button onClick={()=>{setPhase("intro");setFocus(12)}}>REPLAY EXPERIENCE ↗</button></div>
-     {phase==="gallery"?<div className="ttl2-gallery-interface">
-       <div className="ttl2-project-index"><span>SELECTED WORK / 0{active+1}—03</span><div className="ttl2-project-tabs">{works.map((w,i)=><button key={w.id} className={active===i?"is-active":""} onClick={()=>next(i)}>0{i+1} / {w.category}</button>)}</div></div>
-       <div className="ttl2-project-copy"><span>{works[active].year} / CONCEPT PROJECT</span><h1>{works[active].title.split(" / ")[0]}<br/><em>{works[active].title.split(" / ")[1]}.</em></h1><p>{works[active].subtitle}</p><button onClick={()=>setPhase("project")}>EXPLORE THIS STORY <ArrowUpRight size={20}/></button></div>
-       <div className="ttl2-arrows"><button aria-label="Projet précédent" onClick={()=>next(active-1)}><ArrowLeft/></button><button aria-label="Projet suivant" onClick={()=>next(active+1)}><ArrowRight/></button></div>
-     </div>:<div className="ttl2-detail"><button className="ttl2-back" onClick={()=>setPhase("gallery")}><ArrowLeft size={18}/> BACK TO THE GALLERY</button><div className="ttl2-detail-heading"><span>0{active+1} / {works[active].category} / FICTIONAL CONCEPT</span><h1>{works[active].title}</h1><p>{works[active].description}</p></div><div className="ttl2-editorial">{works[active].images.map((src,i)=><figure key={src}><img src={src} alt={`Photographie d'illustration ${i+1} du concept ${works[active].title}`} loading={i===0?"eager":"lazy"}/><figcaption>FRAME 0{i+1} / VISUAL STUDY</figcaption></figure>)}</div><button className="ttl2-next" onClick={()=>{next(active+1);setPhase("gallery")}}>NEXT COLLECTION <ArrowRight/></button></div>}
-     <footer className="ttl2-footer"><span>AT WEBLAB / CREATIVE DEMONSTRATION — FICTIONAL PROJECTS, EDITORIAL STOCK PHOTOGRAPHY</span><h2>YOUR WORK DESERVES<br/><em>AN EXPERIENCE.</em></h2><Link href="/#contact">BUILD YOUR PORTFOLIO WITH AT WEBLAB <ArrowUpRight/></Link></footer>
-   </section>}
+ useEffect(()=>{const media=window.matchMedia("(prefers-reduced-motion: reduce)");const change=()=>setReduced(media.matches);change();media.addEventListener("change",change);try{const c=document.createElement("canvas");setWebgl(Boolean(c.getContext("webgl2")||c.getContext("webgl")))}catch{setWebgl(false)}return()=>media.removeEventListener("change",change)},[]);
+ useEffect(()=>{
+  let pending=false;
+  const update=()=>{pending=false;const el=root.current;if(!el)return;const range=Math.max(1,el.offsetHeight-window.innerHeight);const p=clamp((window.scrollY-el.offsetTop)/range);progress.current=p;setPosition(Math.round(p*100))};
+  const onScroll=()=>{if(!pending){pending=true;requestAnimationFrame(update)}};
+  update();window.addEventListener("scroll",onScroll,{passive:true});window.addEventListener("resize",onScroll);
+  return()=>{window.removeEventListener("scroll",onScroll);window.removeEventListener("resize",onScroll)}
+ },[]);
+ return <main className="ttl3" ref={root}>
+  <header className="ttl3-nav"><Link href="/#realisations"><ArrowLeft size={16}/> AT WEBLAB®</Link><span>THROUGH THE LENS — AN IMMERSIVE STUDY</span><Link href="/#contact">START A PROJECT <ArrowUpRight size={16}/></Link></header>
+  <div className="ttl3-viewport" aria-hidden="true">
+   {webgl?<World progress={progress} reduced={reduced}/>:<div className="ttl3-no-webgl" style={{backgroundImage:`linear-gradient(#05070c88,#05070cbb),url(${collections[0].photos[0]})`}}/>}
+   <div className="ttl3-shade"/>
+  </div>
+  <div className="ttl3-progress" aria-hidden="true"><span style={{transform:`scaleX(${position/100})`}}/></div>
+  <div className="ttl3-chapters">
+   <section className="ttl3-chapter ttl3-opening"><div><span className="ttl3-kicker">AT WEBLAB PRESENTS / 001</span><h1>THROUGH<br/>THE <em>LENS.</em></h1><p>Don't just see the work.<br/>Step inside it.</p></div><div className="ttl3-scroll"><ArrowDown size={18}/> SCROLL TO EXPLORE</div></section>
+   <section className="ttl3-chapter ttl3-aperture"><div><span className="ttl3-kicker">01 / FIND YOUR PERSPECTIVE</span><h2>EVERY STORY<br/>BEGINS WITH<br/><em>A FOCUS.</em></h2><p>Continue scrolling. Watch the aperture open and move beyond the frame.</p></div></section>
+   <section className="ttl3-chapter ttl3-cross"><div><span className="ttl3-kicker">02 / ENTER THE FRAME</span><h2>GO BEYOND<br/><em>THE IMAGE.</em></h2><p>A portfolio should be something you experience, not just something you browse.</p></div></section>
+   {collections.map((work,i)=><section className="ttl3-chapter ttl3-collection" key={work.index}><div className={i%2?"ttl3-copy ttl3-copy-right":"ttl3-copy"}><span className="ttl3-kicker">0{i+3} / {work.label} — CONCEPT</span><h2>{work.title.split(" / ")[0]}<br/><em>{work.title.split(" / ")[1]}.</em></h2><p>{work.sub}</p><span className="ttl3-caption">SCROLL TO CONTINUE <ArrowDown size={14}/></span></div></section>)}
+   <section className="ttl3-chapter ttl3-final"><div><span className="ttl3-kicker">AT WEBLAB / BEYOND THE FRAME</span><h2>YOUR WORK.<br/><em>YOUR UNIVERSE.</em></h2><p>Imagine a portfolio built around the way you see the world.</p><a href="#ttl3-projects">DISCOVER THE COLLECTIONS <ArrowDown size={17}/></a></div></section>
+  </div>
+  <section id="ttl3-projects" className="ttl3-editorial"><div className="ttl3-editorial-heading"><span>SELECTED WORK / CREATIVE CONCEPTS</span><h2>STORIES WORTH<br/><em>EXPLORING.</em></h2><p>Photographies d'illustration. Ces projets sont des concepts créatifs AT WebLab et ne représentent pas de véritables commandes clients.</p></div>
+   {collections.map(work=><article key={work.index} className="ttl3-story"><div className="ttl3-story-title"><span>{work.index} / {work.label}</span><h3>{work.title}</h3><p>{work.description}</p></div><div className="ttl3-photo-grid">{work.photos.map((src,i)=><figure key={src}><img src={src} alt={`Photographie de démonstration ${i+1} pour ${work.title}`} loading="lazy"/><figcaption>FRAME 0{i+1} / {work.label}</figcaption></figure>)}</div></article>)}
+  </section>
+  <footer className="ttl3-outro"><span>AT WEBLAB / IMMERSIVE DIGITAL EXPERIENCES</span><h2>BEYOND<br/><em>THE FRAME.</em></h2><Link href="/#contact">LET'S BUILD YOUR EXPERIENCE <ArrowUpRight size={21}/></Link><p>Portfolio conceptuel · Photographies de démonstration · AT WebLab</p></footer>
  </main>
 }
