@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import Link from "next/link";
-import { ArrowDown, ArrowLeft, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowUpRight, Maximize2, Minimize2 } from "lucide-react";
 
 const image=(id:string,w=1400)=>`https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=85`;
 const collections=[
@@ -52,15 +52,15 @@ function World({progress,reduced}:{progress:React.RefObject<number>;reduced:bool
   const frames:THREE.Group[]=[];
   const planeGeo=geom(new THREE.PlaneGeometry(5.2,6.6));
   const frameGeo=geom(new THREE.BoxGeometry(5.42,6.82,.12));
-  const borderMat=mat(new THREE.MeshStandardMaterial({color:0x725e50,metalness:.68,roughness:.33}));
+  const borderMat=mat(new THREE.MeshStandardMaterial({color:0x725e50,metalness:.68,roughness:.33}));\n  const matboard=mat(new THREE.MeshBasicMaterial({color:0xe8e1d8,side:THREE.DoubleSide}));\n  const insetGeo=geom(new THREE.PlaneGeometry(4.72,6.08));
   const allPhotos=collections.flatMap(c=>c.photos.slice(0,3));
   allPhotos.forEach((url,i)=>{
    const g=new THREE.Group();const section=Math.floor(i/3);const within=i%3;
    g.position.set((within-1)*6.3,0,-section*13);g.rotation.y=(within-1)*-.1;
    const frame=new THREE.Mesh(frameGeo,borderMat);frame.position.z=-.12;g.add(frame);
-   const pm=mat(new THREE.MeshBasicMaterial({color:0x34313a,side:THREE.DoubleSide}));
-   const panel=new THREE.Mesh(planeGeo,pm);g.add(panel);gallery.add(g);frames.push(g);
-   loader.load(url,t=>{if(!el.isConnected){t.dispose();return}t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;texs.push(t);pm.map=t;pm.color.set(0xffffff);pm.needsUpdate=true},undefined,()=>{});
+   const mount=new THREE.Mesh(planeGeo,matboard);mount.position.z=.018;g.add(mount);\n   const pm=mat(new THREE.MeshBasicMaterial({color:0x34313a,side:THREE.DoubleSide}));
+   const panel=new THREE.Mesh(insetGeo,pm);panel.position.z=.035;g.add(panel);gallery.add(g);frames.push(g);
+   loader.load(url,t=>{if(!el.isConnected){t.dispose();return}t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;const source=t.image as HTMLImageElement;const aspect=source.width/source.height;const frameAspect=4.72/6.08;if(aspect>frameAspect){t.repeat.set(frameAspect/aspect,1);t.offset.set((1-t.repeat.x)/2,0)}else{t.repeat.set(1,aspect/frameAspect);t.offset.set(0,(1-t.repeat.y)/2)}texs.push(t);pm.map=t;pm.color.set(0xffffff);pm.needsUpdate=true},undefined,()=>{});
   });
   const floorMat=mat(new THREE.MeshStandardMaterial({color:0x0e1013,roughness:.35,metalness:.2}));
   const floor=new THREE.Mesh(geom(new THREE.PlaneGeometry(80,100)),floorMat);floor.rotation.x=-Math.PI/2;floor.position.set(0,-4,-43);gallery.add(floor);
@@ -103,7 +103,7 @@ export default function ImmersiveExperience(){
  const progress=useRef(0);
  const [position,setPosition]=useState(0);
  const [reduced,setReduced]=useState(false);
- const [webgl,setWebgl]=useState(true);
+ const [webgl,setWebgl]=useState(true);\n const [fullscreen,setFullscreen]=useState(false);\n const [fullscreenSupported,setFullscreenSupported]=useState(false);\n useEffect(()=>{const sync=()=>setFullscreen(Boolean(document.fullscreenElement));setFullscreenSupported(typeof document.documentElement.requestFullscreen==="function");document.addEventListener("fullscreenchange",sync);return()=>document.removeEventListener("fullscreenchange",sync)},[]);\n const toggleFullscreen=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else{await document.documentElement.requestFullscreen()}}catch(error){console.warn("Fullscreen mode is unavailable",error)}};
  useEffect(()=>{const media=window.matchMedia("(prefers-reduced-motion: reduce)");const change=()=>setReduced(media.matches);change();media.addEventListener("change",change);try{const c=document.createElement("canvas");setWebgl(Boolean(c.getContext("webgl2")||c.getContext("webgl")))}catch{setWebgl(false)}return()=>media.removeEventListener("change",change)},[]);
  useEffect(()=>{
   let pending=false;
@@ -113,7 +113,7 @@ export default function ImmersiveExperience(){
   return()=>{window.removeEventListener("scroll",onScroll);window.removeEventListener("resize",onScroll)}
  },[]);
  return <main className="ttl3" ref={root}>
-  <header className="ttl3-nav"><Link href="/#realisations"><ArrowLeft size={16}/> AT WEBLAB®</Link><span>THROUGH THE LENS — AN IMMERSIVE STUDY</span><Link href="/#contact">START A PROJECT <ArrowUpRight size={16}/></Link></header>
+  <header className="ttl3-nav"><Link href="/#realisations"><ArrowLeft size={16}/> AT WEBLAB®</Link><span>THROUGH THE LENS — AN IMMERSIVE STUDY</span><div className="ttl3-nav-actions">{fullscreenSupported&&<button type="button" className="ttl3-fullscreen" onClick={toggleFullscreen} aria-label={fullscreen?"Exit fullscreen":"Enter fullscreen"} title={fullscreen?"Exit fullscreen (Esc)":"Enter fullscreen"} aria-pressed={fullscreen}>{fullscreen?<Minimize2 size={17}/>:<Maximize2 size={17}/>}<span>{fullscreen?"EXIT FULLSCREEN":"FULLSCREEN"}</span></button>}<Link href="/#contact">START A PROJECT <ArrowUpRight size={16}/></Link></div></header>
   <div className="ttl3-viewport" aria-hidden="true">
    {webgl?<World progress={progress} reduced={reduced}/>:<div className="ttl3-no-webgl" style={{backgroundImage:`linear-gradient(#05070c88,#05070cbb),url(${collections[0].photos[0]})`}}/>}
    <div className="ttl3-shade"/>
@@ -127,7 +127,7 @@ export default function ImmersiveExperience(){
    <section className="ttl3-chapter ttl3-final"><div><span className="ttl3-kicker">AT WEBLAB / BEYOND THE FRAME</span><h2>YOUR WORK.<br/><em>YOUR UNIVERSE.</em></h2><p>Imagine a portfolio built around the way you see the world.</p><a href="#ttl3-projects">DISCOVER THE COLLECTIONS <ArrowDown size={17}/></a></div></section>
   </div>
   <section id="ttl3-projects" className="ttl3-editorial"><div className="ttl3-editorial-heading"><span>SELECTED WORK / CREATIVE CONCEPTS</span><h2>STORIES WORTH<br/><em>EXPLORING.</em></h2><p>Photographies d'illustration. Ces projets sont des concepts créatifs AT WebLab et ne représentent pas de véritables commandes clients.</p></div>
-   {collections.map(work=><article key={work.index} className="ttl3-story"><div className="ttl3-story-title"><span>{work.index} / {work.label}</span><h3>{work.title}</h3><p>{work.description}</p></div><div className="ttl3-photo-grid">{work.photos.map((src,i)=><figure key={src}><img src={src} alt={`Photographie de démonstration ${i+1} pour ${work.title}`} loading="lazy"/><figcaption>FRAME 0{i+1} / {work.label}</figcaption></figure>)}</div></article>)}
+   {collections.map(work=><article key={work.index} className="ttl3-story"><div className="ttl3-story-title"><span>{work.index} / {work.label}</span><h3>{work.title}</h3><p>{work.description}</p></div><div className="ttl3-photo-grid">{work.photos.map((src,i)=><figure key={src}><img src={src} style={{objectPosition:i===0?"50% 28%":i===1?"50% 36%":"50% 42%"}} alt={`Photographie de démonstration ${i+1} pour ${work.title}`} loading="lazy"/><figcaption>FRAME 0{i+1} / {work.label}</figcaption></figure>)}</div></article>)}
   </section>
   <footer className="ttl3-outro"><span>AT WEBLAB / IMMERSIVE DIGITAL EXPERIENCES</span><h2>BEYOND<br/><em>THE FRAME.</em></h2><Link href="/#contact">LET'S BUILD YOUR EXPERIENCE <ArrowUpRight size={21}/></Link><p>Portfolio conceptuel · Photographies de démonstration · AT WebLab</p></footer>
  </main>
