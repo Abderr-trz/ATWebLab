@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Volume2, VolumeX } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 
 type Phase="intro"|"transition"|"gallery"|"project";
 type Work={id:string,title:string,category:string,year:string,subtitle:string,description:string,images:string[]};
@@ -59,9 +59,9 @@ function CinematicScene({phase,focus,active,onEntered}:{phase:Phase;focus:number
     const holder=new THREE.Group();holder.position.set((i-1)*5.4,0,-i*.4);gallery.add(holder);
     const frame=new THREE.Mesh(borderGeo,frameMat);frame.position.z=-.08;holder.add(frame);
     const imageMaterial=trackM(new THREE.MeshBasicMaterial({color:0x2b2a2b,side:THREE.DoubleSide}));
-    const plane=new THREE.Mesh(panelGeo,imageMaterial);holder.add(plane);panels.push(plane);
+    const plane=new THREE.Mesh(panelGeo,imageMaterial);holder.add(plane);
     loader.load(work.images[0],tex=>{if(disposed){tex.dispose();return}tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=4;textures.push(tex);imageMaterial.map=tex;imageMaterial.color.set("#ffffff");imageMaterial.needsUpdate=true},undefined,()=>{});
-    const pedestal=mesh(holder,new THREE.BoxGeometry(4.5,.04,2),metal,0,-3.4,-.3);pedestal.rotation.x=.05;
+    mesh(holder,new THREE.BoxGeometry(4.5,.04,2),metal,0,-3.4,-.3);pedestal.rotation.x=.05;
   });
   // Architectural light beams and floor lines for depth.
   const lineMaterial=trackM(new THREE.LineBasicMaterial({color:0x775b50,transparent:true,opacity:.3}));
