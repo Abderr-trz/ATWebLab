@@ -52,13 +52,16 @@ function World({progress,reduced}:{progress:React.RefObject<number>;reduced:bool
   const frames:THREE.Group[]=[];
   const planeGeo=geom(new THREE.PlaneGeometry(5.2,6.6));
   const frameGeo=geom(new THREE.BoxGeometry(5.42,6.82,.12));
-  const borderMat=mat(new THREE.MeshStandardMaterial({color:0x725e50,metalness:.68,roughness:.33}));\n  const matboard=mat(new THREE.MeshBasicMaterial({color:0xe8e1d8,side:THREE.DoubleSide}));\n  const insetGeo=geom(new THREE.PlaneGeometry(4.72,6.08));
+  const borderMat=mat(new THREE.MeshStandardMaterial({color:0x725e50,metalness:.68,roughness:.33}));
+  const matboard=mat(new THREE.MeshBasicMaterial({color:0xe8e1d8,side:THREE.DoubleSide}));
+  const insetGeo=geom(new THREE.PlaneGeometry(4.72,6.08));
   const allPhotos=collections.flatMap(c=>c.photos.slice(0,3));
   allPhotos.forEach((url,i)=>{
    const g=new THREE.Group();const section=Math.floor(i/3);const within=i%3;
    g.position.set((within-1)*6.3,0,-section*13);g.rotation.y=(within-1)*-.1;
    const frame=new THREE.Mesh(frameGeo,borderMat);frame.position.z=-.12;g.add(frame);
-   const mount=new THREE.Mesh(planeGeo,matboard);mount.position.z=.018;g.add(mount);\n   const pm=mat(new THREE.MeshBasicMaterial({color:0x34313a,side:THREE.DoubleSide}));
+   const mount=new THREE.Mesh(planeGeo,matboard);mount.position.z=.018;g.add(mount);
+   const pm=mat(new THREE.MeshBasicMaterial({color:0x34313a,side:THREE.DoubleSide}));
    const panel=new THREE.Mesh(insetGeo,pm);panel.position.z=.035;g.add(panel);gallery.add(g);frames.push(g);
    loader.load(url,t=>{if(!el.isConnected){t.dispose();return}t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;const source=t.image as HTMLImageElement;const aspect=source.width/source.height;const frameAspect=4.72/6.08;if(aspect>frameAspect){t.repeat.set(frameAspect/aspect,1);t.offset.set((1-t.repeat.x)/2,0)}else{t.repeat.set(1,aspect/frameAspect);t.offset.set(0,(1-t.repeat.y)/2)}texs.push(t);pm.map=t;pm.color.set(0xffffff);pm.needsUpdate=true},undefined,()=>{});
   });
@@ -103,7 +106,11 @@ export default function ImmersiveExperience(){
  const progress=useRef(0);
  const [position,setPosition]=useState(0);
  const [reduced,setReduced]=useState(false);
- const [webgl,setWebgl]=useState(true);\n const [fullscreen,setFullscreen]=useState(false);\n const [fullscreenSupported,setFullscreenSupported]=useState(false);\n useEffect(()=>{const sync=()=>setFullscreen(Boolean(document.fullscreenElement));setFullscreenSupported(typeof document.documentElement.requestFullscreen==="function");document.addEventListener("fullscreenchange",sync);return()=>document.removeEventListener("fullscreenchange",sync)},[]);\n const toggleFullscreen=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else{await document.documentElement.requestFullscreen()}}catch(error){console.warn("Fullscreen mode is unavailable",error)}};
+ const [webgl,setWebgl]=useState(true);
+ const [fullscreen,setFullscreen]=useState(false);
+ const [fullscreenSupported,setFullscreenSupported]=useState(false);
+ useEffect(()=>{const sync=()=>setFullscreen(Boolean(document.fullscreenElement));setFullscreenSupported(typeof document.documentElement.requestFullscreen==="function");document.addEventListener("fullscreenchange",sync);return()=>document.removeEventListener("fullscreenchange",sync)},[]);
+ const toggleFullscreen=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else{await document.documentElement.requestFullscreen()}}catch(error){console.warn("Fullscreen mode is unavailable",error)}};
  useEffect(()=>{const media=window.matchMedia("(prefers-reduced-motion: reduce)");const change=()=>setReduced(media.matches);change();media.addEventListener("change",change);try{const c=document.createElement("canvas");setWebgl(Boolean(c.getContext("webgl2")||c.getContext("webgl")))}catch{setWebgl(false)}return()=>media.removeEventListener("change",change)},[]);
  useEffect(()=>{
   let pending=false;
