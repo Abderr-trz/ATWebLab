@@ -46,6 +46,7 @@ export function LiveProjectPreview() {
           fill
           sizes="(max-width: 900px) calc(100vw - 32px), 65vw"
           quality={70}
+          loading="eager"
         />
           <button type="button" className="live-project-launch" onClick={() => setInteractive(true)}>
             Charger l’aperçu interactif
