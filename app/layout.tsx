@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { site } from "@/lib/site";
 import "./globals.css";
+import "./cinematic-editorial.css";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
 
