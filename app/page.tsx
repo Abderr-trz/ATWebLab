@@ -14,8 +14,8 @@ import { Contact } from "@/components/sections/Contact";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { site } from "@/lib/site";
 
-const title = "Création de sites web au Maroc | AT WebLab";
-const description = "AT WebLab crée des sites vitrines, sites sur mesure et boutiques Shopify pour les entreprises au Maroc. Découvrez nos réalisations et demandez un devis.";
+const title = "Sites web pour photographes et vidéastes au Maroc | AT WebLab";
+const description = "AT WebLab crée des portfolios cinématiques et des sites web sur mesure pour photographes, vidéastes et studios créatifs au Maroc. Découvrez nos réalisations.";
 
 export const metadata: Metadata = {
   title: { absolute: title },
