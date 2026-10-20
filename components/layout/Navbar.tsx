@@ -3,16 +3,14 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, MessageCircle, X } from "lucide-react";
-import { site } from "@/lib/site";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 
 const links = [
-  ["Services", "#services"],
   ["Réalisations", "#realisations"],
-  ["Process", "#process"],
-  ["Tarifs", "#tarifs"],
-  ["FAQ", "#faq"]
-];
+  ["Solutions", "#services"],
+  ["Méthode", "#process"],
+  ["Contact", "#contact"],
+] as const;
 
 export function Navbar() {
   const pathname = usePathname();
@@ -21,36 +19,39 @@ export function Navbar() {
   const sectionHref = (href: string) => pathname === "/" ? href : `/${href}`;
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 32);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => { setOpen(false); }, [pathname]);
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => { if (event.key === "Escape") setOpen(false); };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
   return (
-    <header className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
-      <div className="nav-inner">
-        <a href={pathname === "/" ? "#accueil" : "/"} className="brand" aria-label="AT WebLab, accueil">
-          <Image className="brand-logo" src="/logo.png" alt="" width={46} height={46} priority />
-          <span>AT WebLab</span>
+    <header className={`ce-nav ${scrolled ? "ce-nav-scrolled" : ""}`}>
+      <div className="ce-nav-inner">
+        <a className="ce-nav-brand" href={pathname === "/" ? "#accueil" : "/"} aria-label="AT WebLab, accueil">
+          <Image src="/logo.png" alt="" width={44} height={44} priority />
+          <span>AT<span className="ce-brand-light">WEBLAB</span><small>CREATIVE DIGITAL STUDIO</small></span>
         </a>
-        <nav className="nav-desktop" aria-label="Navigation principale">
+        <nav className="ce-nav-links" aria-label="Navigation principale">
           {links.map(([label, href]) => <a key={href} href={sectionHref(href)}>{label}</a>)}
         </nav>
-        <div className="nav-actions">
-          <a className="nav-whatsapp" href={site.whatsapp} target="_blank" rel="noreferrer" aria-label="WhatsApp"><MessageCircle size={19} /></a>
-          <a className="button button-light nav-quote" href={sectionHref("#contact")}>Demander un devis</a>
-          <button className="menu-button" type="button" onClick={() => setOpen(!open)} aria-label={open ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={open}>
-            {open ? <X /> : <Menu />}
-          </button>
+        <div className="ce-nav-actions">
+          <a className="ce-nav-project" href={sectionHref("#contact")}>Parlons de votre projet <ArrowUpRight size={17} /></a>
+          <button type="button" className="ce-nav-toggle" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="ce-mobile-nav" aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}>{open ? <X size={25}/> : <Menu size={25}/>}</button>
         </div>
       </div>
-      {open && (
-        <nav className="nav-mobile" aria-label="Navigation mobile">
-          {links.map(([label, href]) => <a key={href} href={sectionHref(href)} onClick={() => setOpen(false)}>{label}</a>)}
-          <a className="button button-light" href={sectionHref("#contact")} onClick={() => setOpen(false)}>Demander un devis</a>
-        </nav>
-      )}
+      <nav id="ce-mobile-nav" className={`ce-mobile-nav ${open ? "ce-mobile-open" : ""}`} aria-label="Navigation mobile" aria-hidden={!open}>
+        {links.map(([label, href], index) => <a key={href} tabIndex={open ? 0 : -1} href={sectionHref(href)} onClick={() => setOpen(false)}><span>0{index+1}</span>{label}<ArrowUpRight size={19}/></a>)}
+        <p>AT WEBLAB · CRÉATION DIGITALE POUR LES CRÉATEURS VISUELS</p>
+      </nav>
     </header>
   );
 }
