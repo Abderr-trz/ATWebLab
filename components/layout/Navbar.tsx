@@ -1,64 +1,60 @@
 "use client";
-
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
-const navigation = [
+const links = [
   { en: "Work", fr: "Projets", href: "#realisations" },
-  { en: "Expertise", fr: "Expertises", href: "#services" },
-  { en: "Approach", fr: "Méthode", href: "#process" },
-  { en: "Contact", fr: "Contact", href: "#contact" }
+  { en: "Services", fr: "Services", href: "#services" },
+  { en: "Why Us", fr: "Pourquoi nous", href: "#pourquoi-nous" },
+  { en: "Process", fr: "Processus", href: "#process" },
+  { en: "FAQs", fr: "FAQs", href: "#faq" }
 ];
-
 export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [language, setLanguage] = useState<"EN" | "FR">("EN");
   const href = (anchor: string) => pathname === "/" ? anchor : "/" + anchor;
-
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 28);
-    handler();
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll(); window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
   useEffect(() => {
-    try { const saved = window.localStorage.getItem("atweblab-language"); if (saved === "EN" || saved === "FR") setLanguage(saved); } catch {}
+    try { const saved = localStorage.getItem("atweblab-language"); if (saved === "EN" || saved === "FR") setLanguage(saved); } catch {}
+    const onChange = (event: Event) => { const value = (event as CustomEvent<string>).detail; if (value === "EN" || value === "FR") setLanguage(value); };
+    window.addEventListener("atweblab-language-change", onChange);
+    return () => window.removeEventListener("atweblab-language-change", onChange);
   }, []);
-
-  function switchLanguage(next: "EN" | "FR") {
+  function changeLanguage(next: "EN" | "FR") {
     setLanguage(next);
-    try { window.localStorage.setItem("atweblab-language", next); } catch {}
+    try { localStorage.setItem("atweblab-language", next); } catch {}
     window.dispatchEvent(new CustomEvent("atweblab-language-change", { detail: next }));
   }
-
   return (
     <header className={"v3-nav" + (scrolled ? " v3-nav--scrolled" : "")}>
       <div className="v3-nav__inner">
         <a href={href("#accueil")} className="v3-nav__brand" aria-label="AT WebLab home">
-          <Image src="/logo.png" alt="AT WebLab" width={45} height={45} priority />
-          <span>AT <strong>WEBLAB</strong><small>CREATIVE DIGITAL STUDIO</small></span>
+          <Image src="/logo.png" alt="" width={43} height={43} priority />
+          <span>AT WebLab</span>
         </a>
         <nav className="v3-nav__links" aria-label="Main navigation">
-          {navigation.map(link => <a key={link.href} href={href(link.href)}>{language === "FR" ? link.fr : link.en}</a>)}
+          {links.map(item => <a href={href(item.href)} key={item.href}>{language === "FR" ? item.fr : item.en}</a>)}
         </nav>
         <div className="v3-nav__actions">
-          <div className="v3-nav__language" aria-label="Choose language">
-            <button type="button" aria-pressed={language === "EN"} onClick={() => switchLanguage("EN")}>EN</button>
-            <span>/</span>
-            <button type="button" aria-pressed={language === "FR"} onClick={() => switchLanguage("FR")}>FR</button>
+          <div className="v3-nav__language" aria-label="Language">
+            <button type="button" aria-pressed={language === "EN"} onClick={() => changeLanguage("EN")}>EN</button><span>/</span>
+            <button type="button" aria-pressed={language === "FR"} onClick={() => changeLanguage("FR")}>FR</button>
           </div>
-          <a className="v3-nav__cta" href={href("#contact")}>{language === "FR" ? "Parlons de votre projet" : "Let's talk"} <ArrowUpRight size={17}/></a>
-          <button type="button" className="v3-nav__toggle" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} onClick={() => setOpen(v => !v)}>{open ? <X size={23}/> : <Menu size={23}/>}</button>
+          <a href={href("#contact")} className="v3-nav__cta">{language === "FR" ? "Contact" : "Contact"}</a>
+          <button type="button" className="v3-nav__toggle" onClick={() => setOpen(v => !v)} aria-expanded={open} aria-label={open ? "Close menu" : "Open menu"}>{open ? <X size={23}/> : <Menu size={23}/>}</button>
         </div>
       </div>
       {open && <nav className="v3-nav__mobile" aria-label="Mobile navigation">
-        {navigation.map(link => <a key={link.href} href={href(link.href)} onClick={() => setOpen(false)}>{language === "FR" ? link.fr : link.en}<ArrowUpRight size={19}/></a>)}
-        <a href={href("#contact")} onClick={() => setOpen(false)}>{language === "FR" ? "Démarrer un projet" : "Start a project"} <ArrowUpRight size={19}/></a>
+        {links.map(item => <a href={href(item.href)} key={item.href} onClick={() => setOpen(false)}>{language === "FR" ? item.fr : item.en}</a>)}
+        <a href={href("#contact")} onClick={() => setOpen(false)}>Contact</a>
       </nav>}
     </header>
   );
