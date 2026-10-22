@@ -46,6 +46,7 @@ export function ExpertiseRailV3(){
    const bounds=section.getBoundingClientRect();
    const distance=Math.max(1,bounds.height-window.innerHeight);
    setProgress(Math.min(1,Math.max(0,-bounds.top/distance)));
+   setSelected(null);
   };
   const onScroll=()=>{if(!frame)frame=requestAnimationFrame(update);};
   update();window.addEventListener("scroll",onScroll,{passive:true});window.addEventListener("resize",onScroll);
@@ -62,14 +63,14 @@ export function ExpertiseRailV3(){
     <p className="v3-expertise__intro">{fr?"Quatre expertises, une seule ambition : valoriser votre travail.":"Four disciplines. One purpose: make your work stand out."}</p>
    </div>
    <div className="v3-expertise__cards" aria-label={fr?"Nos expertises":"Our expertise"}>
-    {expertise.map(({en,fr:frName,Icon},index)=><button key={en} type="button" className={"v3-expertise__card"+(active===index?" is-active":"")} aria-pressed={active===index} onClick={()=>setSelected(index)} onMouseEnter={()=>{if(window.matchMedia("(hover: hover)").matches)setSelected(index);}}>
+    {expertise.map(({en,fr:frName,Icon},index)=><button key={en} type="button" className={"v3-expertise__card"+(active===index?" is-active":"")} aria-pressed={active===index} onClick={()=>setSelected(index)} onMouseEnter={()=>{if(window.matchMedia("(hover: hover)").matches)setSelected(index);}} onMouseLeave={()=>setSelected(null)}>
       <span className="v3-expertise__cardnumber">0{index+1}</span>
       <Icon size={28} strokeWidth={1.5} aria-hidden="true"/>
       <span className="v3-expertise__cardtitle">{fr?frName:en}</span>
       <ArrowUpRight size={18} className="v3-expertise__arrow" aria-hidden="true"/>
     </button>)}
    </div>
-   <div className="v3-expertise__detail" aria-live="polite">
+   <div className="v3-expertise__detail" aria-live="off">
     <div className="v3-expertise__detail-index">0{active+1} <span>/ 04</span></div>
     <div className="v3-expertise__detail-copy" key={active+"-"+language}>
       <h3>{fr?item.frHeadline:item.enHeadline}</h3>
