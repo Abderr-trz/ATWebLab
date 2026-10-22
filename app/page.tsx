@@ -3,6 +3,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { ClientRail } from "@/components/sections/ClientRail";
+import { CreativeExpertiseStrip } from "@/components/sections/CreativeExpertiseStrip";
 import { Services } from "@/components/sections/Services";
 import { WhyUs } from "@/components/sections/WhyUs";
 import { Portfolio } from "@/components/sections/Portfolio";
@@ -44,6 +45,7 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+        <CreativeExpertiseStrip />
         <ClientRail />
         <Services />
         <WhyUs />
