@@ -5,22 +5,16 @@ import "./PortfolioV3.css";
 
 const projects=[
  {name:"Prodyous",domain:"prodyous.co",url:"https://prodyous.co/",kind:"prodyous",enType:"Creative portfolio",frType:"Portfolio créatif",enDesc:"A distinctive digital presence built around visual storytelling.",frDesc:"Une présence digitale singulière centrée sur la narration visuelle."},
- {name:"Studio DIFAF",domain:"studio-difaf.vercel.app",url:"https://studio-difaf.vercel.app/",kind:"difaf",enType:"Photography & film",frType:"Photographie & vidéo",enDesc:"A cinematic showcase designed to put photography and film first.",frDesc:"Une vitrine cinématique qui met la photographie et la vidéo au premier plan."},
- {name:"Kenza Rachadi",domain:"architecturewebsite-omega.vercel.app",url:"https://architecturewebsite-omega.vercel.app/",kind:"kenza",enType:"Architecture portfolio",frType:"Portfolio d'architecture",enDesc:"An editorial experience shaped around architecture, space and detail.",frDesc:"Une expérience éditoriale dédiée à l'architecture, à l'espace et au détail."}
+ {name:"Kenza Rachadi",domain:"architecturewebsite-omega.vercel.app",url:"https://architecturewebsite-omega.vercel.app/",kind:"kenza",enType:"Architecture portfolio",frType:"Portfolio d'architecture",enDesc:"An editorial experience shaped around architecture, space and detail.",frDesc:"Une expérience éditoriale dédiée à l'architecture, à l'espace et au détail."},
+ {name:"Studio DIFAF",domain:"studio-difaf.vercel.app",url:"https://studio-difaf.vercel.app/",kind:"difaf",enType:"Photography & film",frType:"Photographie & vidéo",enDesc:"A cinematic showcase designed to put photography and film first.",frDesc:"Une vitrine cinématique qui met la photographie et la vidéo au premier plan."}
 ];
 
 function WebsitePreview({kind}:{kind:string}){
- if(kind==="prodyous")return <div className="v3-projects__website v3-projects__website--prodyous">
-  <div className="v3-projects__webnav"><b>PRODYOUS</b><span>WORK &nbsp; ABOUT &nbsp; CONTACT</span></div>
-  <div className="v3-projects__webcontent"><span>INDEPENDENT CREATIVE STUDIO</span><strong>CREATIVE<br/><i>VISION.</i></strong><p>Visual identity / Digital experiences / Creative direction</p><div className="v3-projects__webpill">EXPLORE WORK ↗</div></div><div className="v3-projects__webgraphic"/>
- </div>;
- if(kind==="difaf")return <div className="v3-projects__website v3-projects__website--difaf">
-  <div className="v3-projects__webnav"><b>STUDIO DIFAF</b><span>PORTFOLIO &nbsp; SERVICES &nbsp; CONTACT</span></div>
-  <div className="v3-projects__webcontent"><span>PHOTO & FILM STUDIO</span><strong>EVERY<br/><i>MOMENT</i><br/>MATTERS.</strong><p>Stories worth remembering.</p><div className="v3-projects__webpill">DISCOVER THE STUDIO ↗</div></div><div className="v3-projects__webgraphic"/>
- </div>;
- return <div className="v3-projects__website v3-projects__website--kenza">
-  <div className="v3-projects__webnav"><b>KENZA RACHADI</b><span>PROJECTS &nbsp; STUDIO &nbsp; CONTACT</span></div>
-  <div className="v3-projects__webcontent"><span>ARCHITECTURE & INTERIOR DESIGN</span><strong>SPACES<br/>WITH <i>SOUL.</i></strong><p>Form. Light. Material. Intention.</p><div className="v3-projects__webpill">SELECTED PROJECTS ↗</div></div><div className="v3-projects__webgraphic"/>
+ const files:Record<string,string>={prodyous:"/projects/prodyous-home.png",kenza:"/projects/kenza-home.png",difaf:"/projects/difaf-home.png"};
+ const names:Record<string,string>={prodyous:"Prodyous — Vision Executed",kenza:"Kenza Rachadi — L'art d'habiter",difaf:"Studio DIFAF — Vos moments, notre regard"};
+ return <div className={"v3-projects__website v3-projects__website--"+kind}>
+  <img src={files[kind]} alt={names[kind]} loading="lazy" onError={event=>{event.currentTarget.style.display="none";event.currentTarget.parentElement?.classList.add("v3-projects__image-missing");}}/>
+  <span className="v3-projects__missing-label">{names[kind]}</span>
  </div>;
 }
 
