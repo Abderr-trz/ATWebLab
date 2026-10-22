@@ -1,51 +1,30 @@
-import { ArrowUpRight } from "lucide-react";
-import { Reveal } from "@/components/ui/Reveal";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { LiveProjectPreview } from "@/components/ui/LiveProjectPreview";
-import { LiveDoumiPreview } from "@/components/ui/LiveDoumiPreview";
-import { NetworkField } from "@/components/ui/NetworkField";
+"use client";
+import { useEffect, useState } from "react";
+import { ArrowUpRight, MoveUpRight } from "lucide-react";
+import "./PortfolioV3.css";
 
-const projects = [
-  { name: "Prodyous", url: "https://prodyous.co/", desc: "Une présence digitale structurée et contemporaine, conçue pour présenter une offre avec clarté et guider naturellement vers la prise de contact.", tags: ["Web design", "Développement", "Responsive"], theme: "prodyous" },
-  { name: "Doumi Physio", url: "https://doumi-phisio.vercel.app/", desc: "Un site rassurant et accessible pour un cabinet de physiothérapie, pensé pour rendre l’information médicale simple et la prise de rendez-vous évidente.", tags: ["Santé", "UX/UI", "Site vitrine"], theme: "doumi" }
+const projects=[
+ {number:"01",name:"Prodyous",type:"Creative portfolio",frType:"Portfolio créatif",description:"A confident digital home for visual storytelling.",frDescription:"Un univers digital affirmé pour raconter des histoires visuelles.",url:"https://prodyous.co/",domain:"prodyous.co",theme:"prodyous",tag:"CREATIVE / PORTFOLIO"},
+ {number:"02",name:"Studio DIFAF",type:"Photography & film studio",frType:"Studio photo & vidéo",description:"An elegant showcase built around the work, not the noise.",frDescription:"Une vitrine élégante qui laisse toute la place aux réalisations.",url:"https://studio-difaf.vercel.app/",domain:"studio-difaf.vercel.app",theme:"difaf",tag:"PHOTOGRAPHY / FILM"},
+ {number:"03",name:"Kenza Rachadi",type:"Architecture portfolio",frType:"Portfolio architecture",description:"A considered editorial space for architecture and form.",frDescription:"Un espace éditorial soigné pour l'architecture et les formes.",url:"https://architecturewebsite-omega.vercel.app/",domain:"architecturewebsite-omega.vercel.app",theme:"architecture",tag:"ARCHITECTURE / EDITORIAL"}
 ];
-
-function BrowserPreview({ theme, name }: { theme: string; name: string }) {
-  return (
-    <div className={`browser ${theme}`} aria-label={`Aperçu du projet ${name}`}>
-      <div className="browser-bar"><div><i /><i /><i /></div><span>{theme === "prodyous" ? "prodyous.co" : "doumi-phisio.vercel.app"}</span></div>
-      {theme === "prodyous" ? <LiveProjectPreview /> : theme === "doumi" ? <LiveDoumiPreview /> : <div className="browser-page">
-        <div className="mock-nav"><b>{name}</b><span /><span /><span /></div>
-        <div className="mock-hero">
-          <div><small>{theme === "prodyous" ? "PRODYous" : "VOTRE BIEN-ÊTRE"}</small><strong>{theme === "prodyous" ? "Transformez votre vision en impact." : "Retrouvez votre mobilité, naturellement."}</strong><em /></div>
-          <div className="mock-visual"><span /></div>
-        </div>
-        <div className="mock-cards"><span /><span /><span /></div>
-      </div>}
-    </div>
-  );
-}
-
-export function Portfolio() {
-  return (
-    <section id="realisations" className="section portfolio">
-      <NetworkField variant="wide" />
-      <div className="container">
-        <Reveal><SectionHeading number="03" title="Nos réalisations" intro="Deux univers différents, une même exigence de clarté et de finition." /></Reveal>
-        <div className="projects">
-          {projects.map((project, i) => (
-            <article className="project" key={project.name}>
-              <Reveal className="project-preview"><BrowserPreview theme={project.theme} name={project.name} /></Reveal>
-              <Reveal className="project-copy" delay={0.1}>
-                <p className="project-count">Projet {String(i + 1).padStart(2, "0")}</p>
-                <h3>{project.name}</h3><p>{project.desc}</p>
-                <div className="project-tags">{project.tags.map(t => <span key={t}>{t}</span>)}</div>
-                <a href={project.url} target="_blank" rel="noreferrer">Voir le projet <ArrowUpRight size={18} /></a>
-              </Reveal>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+export function Portfolio(){
+ const [language,setLanguage]=useState<"EN"|"FR">("EN");
+ useEffect(()=>{
+  try{const saved=localStorage.getItem("atweblab-language");if(saved==="EN"||saved==="FR")setLanguage(saved);}catch{}
+  const listener=(e:Event)=>{const next=(e as CustomEvent<string>).detail;if(next==="EN"||next==="FR")setLanguage(next);};
+  window.addEventListener("atweblab-language-change",listener);
+  return ()=>window.removeEventListener("atweblab-language-change",listener);
+ },[]);
+ const fr=language==="FR";
+ return <section id="realisations" className="v3-work" aria-labelledby="v3-work-heading">
+  <div className="v3-work__inner">
+   <div className="v3-work__heading"><div><span className="v3-work__eyebrow"><i/> {fr?"PROJETS SÉLECTIONNÉS":"SELECTED PROJECTS"} / 2026</span><h2 id="v3-work-heading">{fr?"Notre travail.":"Work that"}<br/><em>{fr?"Notre signature.":"speaks for itself."}</em></h2></div><p>{fr?"Des expériences digitales créées pour donner à chaque projet une présence singulière.":"Digital experiences crafted to give every project its own unmistakable presence."}</p></div>
+   <div className="v3-work__grid">{projects.map((project,index)=><a className={"v3-work__card v3-work__card--"+project.theme} key={project.name} href={project.url} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.name} website`}>
+    <div className="v3-work__art"><div className="v3-work__art-top"><span>{project.tag}</span><span>{project.number} / 03</span></div><div className="v3-work__art-center"><span className="v3-work__art-kicker">{project.type}</span><strong>{project.name}</strong><span className="v3-work__art-line"/></div><span className="v3-work__art-domain">{project.domain}</span><span className="v3-work__visit"><MoveUpRight size={23}/></span></div>
+    <div className="v3-work__card-footer"><div><h3>{project.name}</h3><p>{fr?project.frDescription:project.description}</p></div><ArrowUpRight size={21}/></div>
+   </a>)}</div>
+   <div className="v3-work__closing"><span>AT WEBLAB / PROJECT INDEX</span><a href="#contact">{fr?"Votre projet pourrait être le prochain.":"Your project could be next."} <ArrowUpRight size={18}/></a></div>
+  </div>
+ </section>;
 }
