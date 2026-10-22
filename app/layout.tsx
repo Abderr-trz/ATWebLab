@@ -3,20 +3,14 @@ import { Geist } from "next/font/google";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { site } from "@/lib/site";
 import "./globals.css";
+import "./v3-foundation.css";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: {
-    default: site.name,
-    template: `%s | ${site.name}`,
-  },
-  icons: {
-    icon: site.logo,
-    shortcut: site.logo,
-    apple: site.logo,
-  },
+  title: { default: site.name, template: `%s | ${site.name}` },
+  icons: { icon: site.logo, shortcut: site.logo, apple: site.logo },
 };
 
 const globalJsonLd = {
@@ -27,10 +21,7 @@ const globalJsonLd = {
       "@id": `${site.url}/#organization`,
       name: site.name,
       url: `${site.url}/`,
-      logo: {
-        "@type": "ImageObject",
-        url: new URL(site.logo, site.url).toString(),
-      },
+      logo: { "@type": "ImageObject", url: new URL(site.logo, site.url).toString() },
       email: site.email,
       telephone: site.phoneInternational,
       areaServed: { "@type": "Country", name: "Morocco" },
@@ -40,7 +31,7 @@ const globalJsonLd = {
         contactType: "customer service",
         telephone: site.phoneInternational,
         email: site.email,
-        availableLanguage: ["French"],
+        availableLanguage: ["French", "English"],
         areaServed: "MA",
       },
     },
@@ -49,7 +40,7 @@ const globalJsonLd = {
       "@id": `${site.url}/#website`,
       url: `${site.url}/`,
       name: site.name,
-      inLanguage: "fr-MA",
+      inLanguage: ["fr-MA", "en"],
       publisher: { "@id": `${site.url}/#organization` },
     },
   ],
