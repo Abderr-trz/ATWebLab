@@ -67,3 +67,13 @@
 @media(max-width:900px){.v3-showcase{height:450vh}.v3-showcase .v3-expertise__wrap{top:10vh}.v3-showcase__stage{grid-template-columns:1fr;gap:18px}.v3-showcase__visual{height:clamp(250px,35vh,430px)}.v3-showcase__info h3{font-size:30px;margin:10px 0}.v3-showcase__info p{font-size:13px;margin:8px 0}.v3-showcase__top h2{font-size:34px}}
 @media(max-width:600px){.v3-showcase{height:490vh;min-height:2600px}.v3-showcase .v3-expertise__wrap{top:88px;width:calc(100% - 28px)}.v3-showcase__tabs{gap:6px}.v3-showcase__tabs button{font-size:10px;padding:8px 10px}.v3-showcase__tabs button svg{width:14px;height:14px}.v3-showcase__visual{height:34vh;min-height:235px}.v3-showcase__top h2{font-size:30px}.v3-showcase__info h3{font-size:27px}.v3-showcase__blueprint{padding:14px}.v3-showcase__blueprintcopy strong{font-size:18px}.v3-showcase__blueprintcopy p{font-size:9px}.v3-showcase__sheet{font-size:7px;left:14px}.v3-showcase__bottom>span:last-child{display:none}}
 @media(prefers-reduced-motion:reduce){.v3-showcase{height:auto;min-height:0}.v3-showcase .v3-expertise__wrap{position:static}.v3-showcase__stage,.v3-showcase__orb{animation:none}}
+
+/* Screenshot mockup (static image instead of a blocked third-party iframe) */
+.v3-showcase__browser--mockup{background:#f2f0eb}
+.v3-showcase__mockup-viewport{height:calc(100% - 30px);overflow:hidden;position:relative}
+.v3-showcase__mockup-viewport img{display:block;width:100%;height:auto;min-height:100%;object-fit:cover;object-position:top center;animation:v3-kenza-pan 18s ease-in-out infinite alternate}
+.v3-showcase__asset-notice{display:none}
+.v3-showcase__mockup-missing{display:grid;place-items:center;background:linear-gradient(135deg,#e9e4d8,#c5b8a0)}
+.v3-showcase__mockup-missing .v3-showcase__asset-notice{display:block;color:#353028;font-size:clamp(22px,3vw,42px);text-align:center;max-width:430px;line-height:1.1;letter-spacing:-.05em;padding:24px}
+@keyframes v3-kenza-pan{from{transform:translateY(0)}to{transform:translateY(-14%)}}
+@media(prefers-reduced-motion:reduce){.v3-showcase__mockup-viewport img{animation:none}}
