@@ -76,3 +76,12 @@
 @media(max-width:1100px){.v3-nav--editorial .v3-nav__links{gap:18px}.v3-nav--editorial .v3-nav__links a{font-size:12px}}
 @media(max-width:980px){.v3-nav--editorial .v3-nav__inner{width:calc(100% - 36px);height:70px}.v3-nav--editorial .v3-nav__language{display:flex}}
 @media(max-width:550px){.v3-nav--editorial .v3-nav__brand>span{font-size:17px}.v3-nav--editorial .v3-nav__cta{display:none}}
+
+/* Neutral palette refinement — Hybrid Editorial navigation */
+.v3-nav.v3-nav--editorial,.v3-nav.v3-nav--editorial.v3-nav--scrolled{background:rgba(250,250,249,.97);border-bottom-color:#e5e5e5;color:#171717}
+.v3-nav--editorial .v3-nav__brand{color:#171717}.v3-nav--editorial .v3-nav__brand-dot{color:#171717}
+.v3-nav--editorial .v3-nav__links a{color:#525252}.v3-nav--editorial .v3-nav__links a:hover{color:#171717}
+.v3-nav--editorial .v3-nav__language button{color:#737373}.v3-nav--editorial .v3-nav__language button[aria-pressed=true]{color:#171717}
+.v3-nav--editorial .v3-nav__cta{background:#171717;color:#fff}.v3-nav--editorial .v3-nav__cta:hover{background:#333}
+.v3-nav--editorial .v3-nav__toggle{color:#171717;border-color:#d4d4d4}
+.v3-nav--editorial .v3-nav__mobile{background:#fafaf9;border-color:#e5e5e5}.v3-nav--editorial .v3-nav__mobile a{color:#171717;border-color:#e5e5e5}.v3-nav--editorial .v3-nav__mobile a:last-child{color:#171717}
