@@ -12,7 +12,7 @@ const benefits = [
 
 export function WhyUs() {
   return (
-    <section className="section why-us">
+    <section id="about" className="section why-us">
       <div className="container why-layout">
         <Reveal><SectionHeading number="02" title="Pourquoi choisir AT WebLab ?" intro="La crédibilité ne vient pas de promesses abstraites. Elle vient d’un travail clair, soigné et adapté." /></Reveal>
         <div className="benefit-list">
